@@ -3,5 +3,16 @@
   "semi": false,
   "singleQuote": true,
   "tabWidth": 2,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": "*.sol",
+      "options": {
+        "semi": true,
+        "tabWidth": 4,
+        "singleQuote": false,
+        "bracketSpacing": false
+      }
+    }
+  ]
 }

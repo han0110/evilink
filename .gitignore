@@ -1,5 +1,6 @@
 .vscode
 
+lib
 build
 
 node_modules/
