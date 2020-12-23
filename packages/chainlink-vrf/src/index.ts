@@ -33,11 +33,17 @@ export const genVRFRandomness = (
   )
 }
 
-export const keyHash = (privateKey: string): string => {
+interface PublicKey {
+  x: string
+  y: string
+  hash: string
+}
+
+export const publicKey = (privateKey: string): PublicKey => {
   assert(
     hashRegExp.test(privateKey),
     `expect privateKey in form of ${hashRegExp.source}`,
   )
 
-  return addon.keyHash(Buffer.from(privateKey.replace('0x', ''), 'hex'))
+  return addon.publicKey(Buffer.from(privateKey.replace('0x', ''), 'hex'))
 }

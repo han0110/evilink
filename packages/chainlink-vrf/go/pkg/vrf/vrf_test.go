@@ -1,7 +1,6 @@
 package vrf
 
 import (
-	"crypto/ecdsa"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -9,12 +8,12 @@ import (
 )
 
 var (
-	privateKey = common.HexToHash("0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa")
-	// keyHash    = common.HexToHash("0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56")
+	keyD    = common.HexToHash("0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa").Big()
+	keyHash = common.HexToHash("0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56")
 )
 
 func TestGenerateRandomness(t *testing.T) {
-	randomness, err := GenerateRandomness(&ecdsa.PrivateKey{D: privateKey.Big()}, PreSeedData{
+	randomness, err := (&Key{keyD}).GenerateRandomness(PreSeedData{
 		PreSeed:     common.HexToHash("0xb3fb0f766b15159704d515f5e17f813a85d784bcc39ce982af38f0e997aef007"),
 		BlockHash:   common.HexToHash("0xda2f81c1e0a64897c37fe16a8d0dce7ea5c2a0de03c9a629277cdd925b3ac228"),
 		BlockNumber: 777,
@@ -26,8 +25,6 @@ func TestGenerateRandomness(t *testing.T) {
 }
 
 func TestKeyHash(t *testing.T) {
-	keyHash := KeyHash(&ecdsa.PrivateKey{D: privateKey.Big()})
-
-	expectedKeyHash := common.HexToHash("0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56")
-	assert.Equal(t, keyHash, expectedKeyHash, "invalid key hash generated")
+	publicKey := (&Key{keyD}).PublicKey()
+	assert.Equal(t, publicKey.Hash, keyHash, "invalid key hash generated")
 }

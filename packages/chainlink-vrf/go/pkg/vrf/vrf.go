@@ -2,6 +2,7 @@ package vrf
 
 import (
 	"crypto/ecdsa"
+	"math/big"
 
 	"github.com/alangpierce/go-forceexport"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -24,6 +25,18 @@ func init() {
 	}
 }
 
+// Key defines VRF private key
+type Key struct {
+	D *big.Int
+}
+
+// PublicKey defines VRF public key
+type PublicKey struct {
+	X    *big.Int
+	Y    *big.Int
+	Hash common.Hash
+}
+
 // PreSeedData defines the randomness request payload
 type PreSeedData struct {
 	PreSeed     common.Hash
@@ -31,9 +44,9 @@ type PreSeedData struct {
 	BlockNumber uint64
 }
 
-// GenerateRandomness generates VRF randomness from provided private key and pre-seed data
-func GenerateRandomness(ecdsaPrivateKey *ecdsa.PrivateKey, preSeedData PreSeedData) (common.Hash, error) {
-	privateKey := fromGethKey(&keystore.Key{PrivateKey: ecdsaPrivateKey})
+// GenerateRandomness generates VRF randomness from provided pre-seed data
+func (key *Key) GenerateRandomness(preSeedData PreSeedData) (common.Hash, error) {
+	privateKey := fromGethKey(&keystore.Key{PrivateKey: &ecdsa.PrivateKey{D: key.D}})
 
 	vrfPreSeedData := vrf.PreSeedData{
 		PreSeed:   vrf.Seed(preSeedData.PreSeed),
@@ -59,9 +72,14 @@ func GenerateRandomness(ecdsaPrivateKey *ecdsa.PrivateKey, preSeedData PreSeedDa
 	return common.BigToHash(proof.Output), nil
 }
 
-// KeyHash get corresponding key hash to provided private key
-func KeyHash(ecdsaPrivateKey *ecdsa.PrivateKey) common.Hash {
-	publicKey := (&secp256k1.Secp256k1{}).Point().Mul(secp256k1.IntToScalar(ecdsaPrivateKey.D), nil)
-	x, y := secp256k1.Coordinates(publicKey)
-	return crypto.Keccak256Hash(append(x.Bytes(), y.Bytes()...))
+// PublicKey returns corresponding pubilc key coordinate (x, y) on secp256k1
+// and keccack256(...x, ...y) as hash.
+func (key *Key) PublicKey() PublicKey {
+	zero := (&secp256k1.Secp256k1{}).Point()
+	x, y := secp256k1.Coordinates(zero.Mul(secp256k1.IntToScalar(key.D), nil))
+	return PublicKey{
+		X:    x,
+		Y:    y,
+		Hash: crypto.Keccak256Hash(append(x.Bytes(), y.Bytes()...)),
+	}
 }

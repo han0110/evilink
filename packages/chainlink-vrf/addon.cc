@@ -28,25 +28,35 @@ Napi::String NapiGenVRFRandomness(const Napi::CallbackInfo& info) {
   return randomness;
 }
 
-Napi::String NapiKeyHash(const Napi::CallbackInfo& info) {
+Napi::Object NapiPublicKey(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
   auto privateKey = info[0].As<Napi::Buffer<unsigned char>>();
 
-  auto ret = KeyHash(GoSlice{.data = privateKey.Data(), .len = 32, .cap = 32});
+  auto ret =
+      PublicKey(GoSlice{.data = privateKey.Data(), .len = 32, .cap = 32});
 
-  Napi::String keyHash = Napi::String::New(env, ret);
+  Napi::String x = Napi::String::New(env, ret.r0);
+  Napi::String y = Napi::String::New(env, ret.r1);
+  Napi::String hash = Napi::String::New(env, ret.r2);
 
-  delete ret;
+  auto publicKey = Napi::Object::New(env);
+  publicKey.Set("x", x);
+  publicKey.Set("y", y);
+  publicKey.Set("hash", hash);
 
-  return keyHash;
+  delete ret.r0;
+  delete ret.r1;
+  delete ret.r2;
+
+  return publicKey;
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "genVRFRandomness"),
               Napi::Function::New(env, NapiGenVRFRandomness));
-  exports.Set(Napi::String::New(env, "keyHash"),
-              Napi::Function::New(env, NapiKeyHash));
+  exports.Set(Napi::String::New(env, "publicKey"),
+              Napi::Function::New(env, NapiPublicKey));
   return exports;
 }
 

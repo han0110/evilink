@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { genVRFRandomness, keyHash } from '../src'
+import { genVRFRandomness, publicKey } from '../src'
 
 describe('genVRFRandomness', () => {
   const [privateKey, preSeed, blockHash, blockNumber] = [
@@ -38,18 +38,22 @@ describe('genVRFRandomness', () => {
   })
 })
 
-describe('keyHash', () => {
+describe('publicKey', () => {
   const privateKey =
     '0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa'
 
-  it('should succeed to call keyHash', () => {
-    const expectedKeyHash =
-      '0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56'
-    expect(keyHash(privateKey)).to.equal(expectedKeyHash)
+  it('should succeed to call publicKey', () => {
+    const expectedPublicKey = {
+      x: '0x846c38f26b8d5500182d2a6f772088779f8486640a90b2de0c9f591f3176608a',
+      y: '0xdd6914234c8294d54e7d88e95db89869b8e7dc11607fef7eed0419323f157411',
+      hash:
+        '0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56',
+    }
+    expect(publicKey(privateKey)).to.eql(expectedPublicKey)
   })
 
-  it('should fail to call keyHash with invalid argument', () => {
-    expect(() => keyHash(privateKey.substr(10))).to.throw(
+  it('should fail to call publicKey with invalid argument', () => {
+    expect(() => publicKey(privateKey.substr(10))).to.throw(
       'expect privateKey in form of ^(0x)?[0-9a-f]{64}$',
     )
   })
