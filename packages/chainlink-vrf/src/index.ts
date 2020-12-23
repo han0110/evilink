@@ -5,7 +5,6 @@ const addon = build(`${__dirname}/..`)
 
 const hashRegExp = new RegExp('^(0x)?[0-9a-f]{64}$', 'i')
 
-// eslint-disable-next-line import/prefer-default-export
 export const genVRFRandomness = (
   privateKey: string,
   preSeed: string,
@@ -32,4 +31,13 @@ export const genVRFRandomness = (
     Buffer.from(blockHash.replace('0x', ''), 'hex'),
     blockNumber,
   )
+}
+
+export const keyHash = (privateKey: string): string => {
+  assert(
+    hashRegExp.test(privateKey),
+    `expect privateKey in form of ${hashRegExp.source}`,
+  )
+
+  return addon.keyHash(Buffer.from(privateKey.replace('0x', ''), 'hex'))
 }

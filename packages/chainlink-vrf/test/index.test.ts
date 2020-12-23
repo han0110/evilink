@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { genVRFRandomness } from '../src'
+import { genVRFRandomness, keyHash } from '../src'
 
 describe('genVRFRandomness', () => {
   const [privateKey, preSeed, blockHash, blockNumber] = [
@@ -35,5 +35,22 @@ describe('genVRFRandomness', () => {
     expect(() =>
       genVRFRandomness(privateKey, preSeed, blockHash, -blockNumber),
     ).to.throw('expect blockNumber greater than 0')
+  })
+})
+
+describe('keyHash', () => {
+  const privateKey =
+    '0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa'
+
+  it('should succeed to call keyHash', () => {
+    const expectedKeyHash =
+      '0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56'
+    expect(keyHash(privateKey)).to.equal(expectedKeyHash)
+  })
+
+  it('should fail to call keyHash with invalid argument', () => {
+    expect(() => keyHash(privateKey.substr(10))).to.throw(
+      'expect privateKey in form of ^(0x)?[0-9a-f]{64}$',
+    )
   })
 })

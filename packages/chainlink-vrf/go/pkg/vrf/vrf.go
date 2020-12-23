@@ -6,7 +6,9 @@ import (
 	"github.com/alangpierce/go-forceexport"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
+	"github.com/smartcontractkit/chainlink/core/services/signatures/secp256k1"
 	"github.com/smartcontractkit/chainlink/core/services/vrf"
 	"github.com/smartcontractkit/chainlink/core/store/models/vrfkey"
 )
@@ -29,6 +31,7 @@ type PreSeedData struct {
 	BlockNumber uint64
 }
 
+// GenerateRandomness generates VRF randomness from provided private key and pre-seed data
 func GenerateRandomness(ecdsaPrivateKey *ecdsa.PrivateKey, preSeedData PreSeedData) (common.Hash, error) {
 	privateKey := fromGethKey(&keystore.Key{PrivateKey: ecdsaPrivateKey})
 
@@ -54,4 +57,11 @@ func GenerateRandomness(ecdsaPrivateKey *ecdsa.PrivateKey, preSeedData PreSeedDa
 	}
 
 	return common.BigToHash(proof.Output), nil
+}
+
+// KeyHash get corresponding key hash to provided private key
+func KeyHash(ecdsaPrivateKey *ecdsa.PrivateKey) common.Hash {
+	publicKey := (&secp256k1.Secp256k1{}).Point().Mul(secp256k1.IntToScalar(ecdsaPrivateKey.D), nil)
+	x, y := secp256k1.Coordinates(publicKey)
+	return crypto.Keccak256Hash(append(x.Bytes(), y.Bytes()...))
 }

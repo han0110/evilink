@@ -24,3 +24,10 @@ func TestGenerateRandomness(t *testing.T) {
 	assert.Nil(t, err, "failed to generate randomness")
 	assert.Equal(t, randomness, expectedRandomness, "invalid randomness generated")
 }
+
+func TestKeyHash(t *testing.T) {
+	keyHash := KeyHash(&ecdsa.PrivateKey{D: privateKey.Big()})
+
+	expectedKeyHash := common.HexToHash("0x9fe62971ada37edbdab3582f8aec660edf7c59b4659d1b9cf321396b73918b56")
+	assert.Equal(t, keyHash, expectedKeyHash, "invalid key hash generated")
+}

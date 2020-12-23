@@ -28,9 +28,25 @@ Napi::String NapiGenVRFRandomness(const Napi::CallbackInfo& info) {
   return randomness;
 }
 
+Napi::String NapiKeyHash(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+
+  auto privateKey = info[0].As<Napi::Buffer<unsigned char>>();
+
+  auto ret = KeyHash(GoSlice{.data = privateKey.Data(), .len = 32, .cap = 32});
+
+  Napi::String keyHash = Napi::String::New(env, ret);
+
+  delete ret;
+
+  return keyHash;
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "genVRFRandomness"),
               Napi::Function::New(env, NapiGenVRFRandomness));
+  exports.Set(Napi::String::New(env, "keyHash"),
+              Napi::Function::New(env, NapiKeyHash));
   return exports;
 }
 
