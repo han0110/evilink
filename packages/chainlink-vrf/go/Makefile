@@ -1,12 +1,11 @@
-.PHONY: clean
+.PHONY: build clean
 
-PREFIX=./build/chainlink_vrf
-TARGET=$(PREFIX).a $(PREFIX).h
+BUILD_DIR=./build
+TARGET_NAME=chainlink_vrf
+TARGET_PREFIX=$(BUILD_DIR)/$(TARGET_NAME)
 
-all: $(TARGET)
-
-$(TARGET):
-	@go build -buildmode=c-archive -o $(PREFIX).a
+build:
+	@go build -buildmode=c-archive -o $(TARGET_PREFIX).a
 
 clean:
-	@-rm -f $(TARGET)
+	@find $(BUILD_DIR) -name '${TARGET_NAME}*' -delete

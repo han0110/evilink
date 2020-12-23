@@ -2,7 +2,12 @@
   "name": "@evilink/chainlink-vrf",
   "version": "0.1.0",
   "license": "MIT",
+  "private": true,
   "gypfile": true,
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "scripts": {
     "install": "node-gyp-build",
     "build": "tsc -b",
