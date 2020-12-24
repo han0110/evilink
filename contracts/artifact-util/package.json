@@ -1,0 +1,19 @@
+{
+  "name": "@evilink/contracts-artifact-util",
+  "version": "0.1.0",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "ethereum-types": "^3.4.0",
+    "ethers": "^5.0.24"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  },
+  "license": "MIT"
+}

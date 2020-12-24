@@ -12,5 +12,5 @@ yarn-error.log
 
 .DS_Store
 
-.chainlink/postgres
-.ganache
+.chainlink
+.evilthereum

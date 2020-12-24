@@ -5,7 +5,7 @@
     "build": "yarn workspaces foreach run build",
     "test": "yarn workspaces foreach run test",
     "lint:ts": "eslint --ignore-path .gitignore '{contracts,evilthereum}/**/*.ts'",
-    "lint:sol": "solhint contracts/**/*.sol",
+    "lint:sol": "solhint --ignore-path contracts/.gitignore contracts/**/*.sol",
     "prettier": "prettier --check '{contracts,evilthereum}/**/*.{ts,sol}' --ignore-path .gitignore"
   },
   "engines": {

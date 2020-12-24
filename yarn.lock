@@ -586,7 +586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@evilink/chainlink-vrf@workspace:packages/chainlink-vrf":
+"@evilink/chainlink-vrf@0.1.0, @evilink/chainlink-vrf@workspace:packages/chainlink-vrf":
   version: 0.0.0-use.local
   resolution: "@evilink/chainlink-vrf@workspace:packages/chainlink-vrf"
   dependencies:
@@ -649,6 +649,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@evilink/evilthereum@workspace:packages/evilthereum"
   dependencies:
+    "@evilink/chainlink-vrf": 0.1.0
     chalk: ^4.1.0
     commander: ^6.2.1
     dayjs: ^1.9.7

@@ -1,0 +1,38 @@
+{
+  "name": "@evilink/contracts-chainlink",
+  "version": "0.1.0",
+  "main": "./lib/src/index.js",
+  "exports": {
+    ".": "./lib/src/index.js"
+  },
+  "scripts": {
+    "build": "yarn compile && tsc -b",
+    "compile": "yarn compile:0.4 && yarn compile:0.6",
+    "compile:0.4": "CONTRACT_SRC_DIR=./contract-0.4 waffle compile ../waffle-0.4",
+    "compile:0.4:watch": "nodemon --exec 'CONTRACT_SRC_DIR=./contract-0.4 waffle compile ../waffle-0.4' --watch ./contract-0.4 --ext sol",
+    "compile:0.6": "CONTRACT_SRC_DIR=./contract-0.6 waffle compile ../waffle-0.6",
+    "compile:0.6:watch": "nodemon --exec 'CONTRACT_SRC_DIR=./contract-0.6 waffle compile ../waffle-0.6' --watch ./contract-0.6 --ext sol",
+    "test": "NODE_ENV=test mocha --require ts-node/register -t 30000 ./test/**/*.test.ts",
+    "test:watch": "yarn test --watch --watch-files ./test/**/*.test.ts",
+    "flatten": "yarn flatten:0.4 && yarn flatten:0.6",
+    "flatten:0.4": "CONTRACT_SRC_DIR=./contract-0.4 waffle flatten ../waffle-0.4",
+    "flatten:0.6": "CONTRACT_SRC_DIR=./contract-0.6 waffle flatten ../waffle-0.6",
+    "clean": "rm -rf build build_flatten"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.0.11",
+    "@evilink/contracts-artifact-util": "0.1.0",
+    "@evilink/chainlink-vrf": "0.1.0",
+    "ethers": "^5.0.24"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.0",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.2.1",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "license": "MIT"
+}
