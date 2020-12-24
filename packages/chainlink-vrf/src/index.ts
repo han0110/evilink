@@ -5,12 +5,18 @@ const addon = build(`${__dirname}/..`)
 
 const hashRegExp = new RegExp('^(0x)?[0-9a-f]{64}$', 'i')
 
-export const genVRFRandomness = (
+interface Proof {
+  randomness: string
+  packed: string
+  packedForContractInput: string
+}
+
+export const generateProof = (
   privateKey: string,
   preSeed: string,
   blockHash: string,
   blockNumber: number,
-): string => {
+): Proof => {
   assert(
     hashRegExp.test(privateKey),
     `expect privateKey in form of ${hashRegExp.source}`,
@@ -25,7 +31,7 @@ export const genVRFRandomness = (
   )
   assert(blockNumber > 0, 'expect blockNumber greater than 0')
 
-  return addon.genVRFRandomness(
+  return addon.generateProof(
     Buffer.from(privateKey.replace('0x', ''), 'hex'),
     Buffer.from(preSeed.replace('0x', ''), 'hex'),
     Buffer.from(blockHash.replace('0x', ''), 'hex'),

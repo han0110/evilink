@@ -11,21 +11,22 @@ import (
 	"evilink/pkg/vrf"
 )
 
-// GenVRFRandomness exports GenerateRandomness
-//export GenVRFRandomness
-func GenVRFRandomness(privateKey, preSeed, blockHash []byte, blockNumber uint64) (*C.char, *C.char) {
-	randomness, err := (&vrf.Key{D: common.BytesToHash(privateKey).Big()}).
-		GenerateRandomness(vrf.PreSeedData{
+// GenerateProof exports GenerateProof
+//export GenerateProof
+func GenerateProof(privateKey, preSeed, blockHash []byte, blockNumber uint64) (*C.char, *C.char, *C.char, *C.char) {
+	proof, err := (&vrf.Key{D: common.BytesToHash(privateKey).Big()}).
+		GenerateProof(vrf.PreSeedData{
 			PreSeed:     common.BytesToHash(preSeed),
 			BlockHash:   common.BytesToHash(blockHash),
 			BlockNumber: blockNumber,
 		})
 
 	if err != nil {
-		return nil, C.CString(fmt.Sprintf("%v", err))
+		return nil, nil, nil, C.CString(fmt.Sprintf("%v", err))
 	}
 
-	return C.CString(randomness.Hex()), nil
+	return C.CString(proof.Randomness.Hex()), C.CString(hexutil.Encode(proof.Packed[:])),
+		C.CString(hexutil.Encode(proof.PackedForContractInput[:])), nil
 }
 
 // PublicKey exports PublicKey
