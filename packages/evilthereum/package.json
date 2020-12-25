@@ -1,0 +1,24 @@
+{
+  "name": "@evilink/evilthereum",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "NODE_ENV=production node lib",
+    "dev": "NODE_ENV=development ts-node src"
+  },
+  "dependencies": {
+    "@evilink/chainlink-vrf": "0.1.0",
+    "@evilink/contracts-chainlink": "0.1.0",
+    "chalk": "^4.1.0",
+    "commander": "^6.2.1",
+    "dayjs": "^1.9.7",
+    "ethers": "^5.0.24",
+    "ganache-core": "^2.13.1",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
