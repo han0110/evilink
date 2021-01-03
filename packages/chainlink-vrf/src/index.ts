@@ -5,7 +5,7 @@ const addon = build(`${__dirname}/..`)
 
 const hashRegExp = new RegExp('^(0x)?[0-9a-f]{64}$', 'i')
 
-interface Proof {
+export type Proof = {
   randomness: string
   packed: string
   packedForContractInput: string
@@ -39,7 +39,7 @@ export const generateProof = (
   )
 }
 
-interface PublicKey {
+export type PublicKey = {
   x: string
   y: string
   hash: string
