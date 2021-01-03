@@ -5,7 +5,7 @@ import {
   vrfCoordinatorFactory,
 } from './artifact'
 
-export interface ChainlinkStack {
+export type ChainlinkStack = {
   mockLinkToken: Contract
   vrfCoordinator: Contract
 }
