@@ -1,0 +1,16 @@
+{
+  "name": "@evilink/chainlink-client",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "typescript": "^4.1.3"
+  }
+}
