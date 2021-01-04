@@ -586,6 +586,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@evilink/chainlink-client@0.1.0, @evilink/chainlink-client@workspace:packages/chainlink-client":
+  version: 0.0.0-use.local
+  resolution: "@evilink/chainlink-client@workspace:packages/chainlink-client"
+  dependencies:
+    axios: ^0.21.1
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
+"@evilink/chainlink-orm@0.1.0, @evilink/chainlink-orm@workspace:packages/chainlink-orm":
+  version: 0.0.0-use.local
+  resolution: "@evilink/chainlink-orm@workspace:packages/chainlink-orm"
+  dependencies:
+    pg-promise: ^10.8.6
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
 "@evilink/chainlink-vrf@0.1.0, @evilink/chainlink-vrf@workspace:packages/chainlink-vrf":
   version: 0.0.0-use.local
   resolution: "@evilink/chainlink-vrf@workspace:packages/chainlink-vrf"
@@ -627,11 +645,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@evilink/contracts-flip-coin@workspace:contracts/flip-coin":
+"@evilink/contracts-faucet@0.1.0, @evilink/contracts-faucet@workspace:contracts/faucet":
+  version: 0.0.0-use.local
+  resolution: "@evilink/contracts-faucet@workspace:contracts/faucet"
+  dependencies:
+    "@evilink/contracts-artifact-util": 0.1.0
+    "@openzeppelin/contracts": ^3.3.0
+    "@types/mocha": ^8.2.0
+    chai: ^4.2.0
+    ethereum-waffle: ^3.2.1
+    ethers: ^5.0.24
+    mocha: ^8.2.1
+    nodemon: ^2.0.6
+    ts-node: ^9.1.1
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
+"@evilink/contracts-flip-coin@0.1.0, @evilink/contracts-flip-coin@workspace:contracts/flip-coin":
   version: 0.0.0-use.local
   resolution: "@evilink/contracts-flip-coin@workspace:contracts/flip-coin"
   dependencies:
-    "@chainlink/contracts": ^0.0.11
     "@evilink/contracts-artifact-util": 0.1.0
     "@evilink/contracts-chainlink": 0.1.0
     "@openzeppelin/contracts": ^3.3.0
@@ -646,19 +680,42 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@evilink/e2e@workspace:packages/e2e":
+  version: 0.0.0-use.local
+  resolution: "@evilink/e2e@workspace:packages/e2e"
+  dependencies:
+    "@evilink/contracts-chainlink": 0.1.0
+    "@evilink/contracts-faucet": 0.1.0
+    "@evilink/contracts-flip-coin": 0.1.0
+    ethers: ^5.0.24
+    ts-node: ^9.1.1
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
 "@evilink/evilthereum@workspace:packages/evilthereum":
   version: 0.0.0-use.local
   resolution: "@evilink/evilthereum@workspace:packages/evilthereum"
   dependencies:
+    "@evilink/chainlink-client": 0.1.0
+    "@evilink/chainlink-orm": 0.1.0
     "@evilink/chainlink-vrf": 0.1.0
     "@evilink/contracts-chainlink": 0.1.0
+    "@evilink/contracts-faucet": 0.1.0
+    "@types/uuid": ^8.3.0
     chalk: ^4.1.0
     commander: ^6.2.1
     dayjs: ^1.9.7
+    ethereumjs-block: ^2.2.2
+    ethereumjs-common: ^1.5.2
+    ethereumjs-tx: ^2.1.2
+    ethereumjs-vm: ^4.2.0
     ethers: ^5.0.24
     ganache-core: ^2.13.1
+    nodemon: ^2.0.6
     ts-node: ^9.1.1
     typescript: ^4.1.3
+    uuid: ^8.3.2
     winston: ^3.3.3
   languageName: unknown
   linkType: soft
@@ -1006,6 +1063,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 4e356a4df5fa9aa2f15979144e9ebf4bad1eb57870dcdf2176446c6619af692e1e68452905814c9279ac0ef6ae160503cf64f995fde5d638358feed9b434dd16
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "@types/uuid@npm:8.3.0"
+  checksum: 620985aed8fdb4aed153daca5235f4303457a67a4d181efac0021712eabd9edd7e88895f79730c0e651effde7633b1b61e49a81519ac8d4e75019d2ac9b6412f
   languageName: node
   linkType: hard
 
@@ -4937,7 +5001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereumjs-common@npm:^1.1.0, ethereumjs-common@npm:^1.3.2, ethereumjs-common@npm:^1.5.0":
+"ethereumjs-common@npm:^1.1.0, ethereumjs-common@npm:^1.3.2, ethereumjs-common@npm:^1.5.0, ethereumjs-common@npm:^1.5.2":
   version: 1.5.2
   resolution: "ethereumjs-common@npm:1.5.2"
   checksum: 9d03a4dc2496983f56fadd7442c4d593b005a69f5134924565f8419ee5eae0e414831cbc59a30c814bdea50a42b0f4c7bbeb814a11aa83edd53ba36bf4ae9bd5
@@ -5021,7 +5085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereumjs-vm@npm:4.2.0":
+"ethereumjs-vm@npm:4.2.0, ethereumjs-vm@npm:^4.2.0":
   version: 4.2.0
   resolution: "ethereumjs-vm@npm:4.2.0"
   dependencies:
@@ -11584,6 +11648,15 @@ typescript@^4.1.3:
   bin:
     uuid: ./bin/uuid
   checksum: 1ce3f37e214d6d0dc94a6a9663a0365013ace66bc3fd5b203e6f5d2eeb978aaee1192367222386345d30b4c6a447928c501121aa84c637724bf105ef57284949
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: aed2bcef341f95635f308fea8831fb9038b18c485fe7e71feb89d2e05602dfecad0cb6f2246fae096d4da425cca6e8a71056f28abd97ad98cf770a2018853248
   languageName: node
   linkType: hard
 
