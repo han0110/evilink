@@ -17,7 +17,7 @@
     "flatten": "yarn flatten:0.4 && yarn flatten:0.6",
     "flatten:0.4": "CONTRACT_SRC_DIR=./contract-0.4 waffle flatten ../waffle-0.4",
     "flatten:0.6": "CONTRACT_SRC_DIR=./contract-0.6 waffle flatten ../waffle-0.6",
-    "clean": "rm -rf build build_flatten"
+    "clean": "rm -rf lib contract-artifact"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.0.11",
