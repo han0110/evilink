@@ -16,7 +16,7 @@
     "@evilink/contracts-faucet": "0.1.0",
     "chalk": "^4.1.0",
     "commander": "^6.2.1",
-    "dayjs": "^1.9.7",
+    "dayjs": "^1.10.1",
     "ethereumjs-block": "^2.2.2",
     "ethereumjs-common": "^1.5.2",
     "ethereumjs-tx": "^2.1.2",
