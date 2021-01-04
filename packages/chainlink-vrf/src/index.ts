@@ -53,3 +53,6 @@ export const publicKey = (privateKey: string): PublicKey => {
 
   return addon.publicKey(Buffer.from(privateKey.replace('0x', ''), 'hex'))
 }
+
+export const compressed = ({ x, y }: PublicKey): string =>
+  `${x}${parseInt(y.slice(-1), 16) % 2 ? '01' : '00'}`
