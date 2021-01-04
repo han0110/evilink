@@ -46,7 +46,7 @@ const simpleFormat = format.printf(({ level, message, timestamp }) =>
   fmt('%s %s %s', timestamp, COLORIZED_LEVEL[level], message),
 )
 
-interface DefaultLogger extends Logger {
+type DefaultLogger = Logger & {
   trace: LeveledLogMethod
 }
 
@@ -55,7 +55,10 @@ const logger: DefaultLogger = loggers.get('default', {
   levels: LEVEL_NUMBER,
   transports: [
     new transports.Console({
-      level: process.env.NODE_ENV === 'production' ? LEVEL.INFO : LEVEL.DEBUG,
+      level:
+        { production: LEVEL.INFO, debug: LEVEL.TRACE }?.[
+          process.env.NODE_ENV
+        ] ?? LEVEL.DEBUG,
     }),
   ],
   format: format.combine(timestampFormat(), simpleFormat),
