@@ -1,6 +1,7 @@
 import { expect, use } from 'chai'
-import { Contract, constants } from 'ethers'
 import { MockProvider, solidity } from 'ethereum-waffle'
+import { Contract } from '@ethersproject/contracts'
+import { WeiPerEther } from '@ethersproject/constants'
 import { faucetFactory } from '../src'
 
 use(solidity)
@@ -15,25 +16,23 @@ describe('Faucet', () => {
     expect(faucet.address).to.be.properAddress
     await walletA.sendTransaction({
       to: faucet.address,
-      value: constants.WeiPerEther.mul(50),
+      value: WeiPerEther.mul(50),
     })
   })
 
   it('should withdraw', async () => {
-    await expect(
-      await faucet.withdraw(constants.WeiPerEther),
-    ).to.changeEtherBalances(
+    await expect(await faucet.withdraw(WeiPerEther)).to.changeEtherBalances(
       [walletA, faucet],
-      [constants.WeiPerEther, constants.WeiPerEther.mul(-1)],
+      [WeiPerEther, WeiPerEther.mul(-1)],
     )
   })
 
   it('should withdrawTo', async () => {
     await expect(
-      await faucet.withdrawTo(walletB.address, constants.WeiPerEther),
+      await faucet.withdrawTo(walletB.address, WeiPerEther),
     ).to.changeEtherBalances(
       [walletA, walletB, faucet],
-      [0, constants.WeiPerEther, constants.WeiPerEther.mul(-1)],
+      [0, WeiPerEther, WeiPerEther.mul(-1)],
     )
   })
 })

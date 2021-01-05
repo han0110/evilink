@@ -1,8 +1,8 @@
 import {
   createContractFactory,
   StandardContractOutput,
+  ContractFactory,
 } from '@evilink/contracts-artifact-util'
-import { ContractFactory } from 'ethers'
 
 import * as FlipCoin from '../contract-artifact/FlipCoin.json'
 

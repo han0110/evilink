@@ -1,8 +1,8 @@
 import {
   createContractFactory,
   StandardContractOutput,
+  ContractFactory,
 } from '@evilink/contracts-artifact-util'
-import { ContractFactory } from 'ethers'
 
 import * as VRFCoordinator from '@chainlink/contracts/abi/v0.6/VRFCoordinator.json'
 import * as BlockhashStore from '@chainlink/contracts/abi/v0.6/BlockhashStore.json'

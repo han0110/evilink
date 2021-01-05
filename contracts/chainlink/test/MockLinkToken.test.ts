@@ -1,6 +1,7 @@
 import { expect, use } from 'chai'
-import { Contract, BigNumber } from 'ethers'
 import { MockProvider, solidity } from 'ethereum-waffle'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
 import { mockLinkTokenFactory } from '../src/artifact'
 
 use(solidity)

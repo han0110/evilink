@@ -1,16 +1,18 @@
 import { StandardContractOutput } from 'ethereum-types'
-import { ContractFactory, Wallet } from 'ethers'
+import { ContractFactory } from '@ethersproject/contracts'
+import { Wallet } from '@ethersproject/wallet'
 
 export const createContractFactory = (artifact: StandardContractOutput) => {
   const factory = new ContractFactory(artifact.abi, artifact.evm.bytecode)
   return {
-    deploy: async (deployer: Wallet, ...args: Array<any>) =>
+    interface: factory.interface,
+    deploy: async (wallet: Wallet, ...args: Array<any>) =>
       factory
-        .connect(deployer)
+        .connect(wallet)
         .deploy(...args)
         .then((contract) => contract.deployed()),
     attach: (address: string) => factory.attach(address),
   }
 }
 
-export { StandardContractOutput }
+export { StandardContractOutput, ContractFactory }

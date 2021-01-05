@@ -1,6 +1,7 @@
 import {
   createContractFactory,
   StandardContractOutput,
+  ContractFactory,
 } from '@evilink/contracts-artifact-util'
 
 import * as VRFConsumer from '../contract-artifact/VRFConsumer.json'
@@ -11,4 +12,4 @@ export const artifact = {
 
 export const vrfConsumerFactory = createContractFactory(artifact.VRFConsumer)
 
-export { StandardContractOutput }
+export { StandardContractOutput, ContractFactory }

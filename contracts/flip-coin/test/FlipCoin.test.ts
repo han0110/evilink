@@ -1,7 +1,7 @@
 // import MockLinkToken from '@evilink/contracts-chainlink/build/MockLinkToken.json'
 import { expect, use } from 'chai'
-import { Contract } from 'ethers'
 import { MockProvider, solidity } from 'ethereum-waffle'
+import { Contract } from '@ethersproject/contracts'
 import { deployChainlinkStack } from '@evilink/contracts-chainlink'
 
 use(solidity)

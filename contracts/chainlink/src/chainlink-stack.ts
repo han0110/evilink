@@ -1,4 +1,6 @@
-import { Contract, Wallet, providers } from 'ethers'
+import { Contract } from '@ethersproject/contracts'
+import { TransactionRequest } from '@ethersproject/providers'
+import { Wallet } from '@ethersproject/wallet'
 import {
   mockLinkTokenFactory,
   blockhashStoreFactory,
@@ -12,7 +14,7 @@ export type ChainlinkStack = {
 
 export const deployChainlinkStack = async (
   deployer: Wallet,
-  options?: providers.TransactionRequest,
+  options?: TransactionRequest,
 ): Promise<ChainlinkStack> => {
   const mockLinkToken = await mockLinkTokenFactory.deploy(
     deployer,

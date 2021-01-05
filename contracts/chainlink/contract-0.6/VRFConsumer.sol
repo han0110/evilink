@@ -27,10 +27,7 @@ contract VRFConsumer is VRFConsumerBase {
     }
 
     // solhint-disable-next-line
-    function fulfillRandomness(bytes32 _, uint256 randomness)
-        internal
-        override
-    {
+    function fulfillRandomness(bytes32, uint256 randomness) internal override {
         _randomness = randomness;
     }
 }

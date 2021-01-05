@@ -1,6 +1,8 @@
 import { expect, use } from 'chai'
-import { Contract, utils } from 'ethers'
 import { MockProvider, solidity } from 'ethereum-waffle'
+import { Contract } from '@ethersproject/contracts'
+import { hexlify } from '@ethersproject/bytes'
+import { randomBytes } from '@ethersproject/random'
 import { generateProof, publicKey } from '@evilink/chainlink-vrf'
 import { deployChainlinkStack } from '../src/chainlink-stack'
 import { vrfConsumerFactory } from './artifact'
@@ -11,8 +13,8 @@ describe('chainlink stack', () => {
   const privateKey =
     '0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa'
   const { x, y, hash: keyHash } = publicKey(privateKey)
-  const oracleAddress = utils.hexlify(utils.randomBytes(20))
-  const jobId = utils.hexlify(utils.randomBytes(32))
+  const oracleAddress = hexlify(randomBytes(20))
+  const jobId = hexlify(randomBytes(32))
   const fee = 0
 
   const [deployer] = new MockProvider().getWallets()
