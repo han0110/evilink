@@ -14,14 +14,20 @@ contract Faucet {
     }
 
     function _withdrawTo(address to, uint256 amount) internal {
-        require(amount <= 1 ether, "");
+        // Check
         require(
-            _withdrawBlockNumber[to] == 0 ||
-                _withdrawBlockNumber[to] > block.number + 10,
-            ""
+            amount <= 1 ether &&
+                (_withdrawBlockNumber[to] == 0 ||
+                    _withdrawBlockNumber[to] > block.number + 10),
+            "TOO_GREEDY"
         );
+
+        // Effect
         _withdrawBlockNumber[to] = block.number;
-        payable(to).transfer(amount);
+
+        // Interaction
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "CALL_FAILURE");
     }
 
     receive() external payable {} // solhint-disable-line no-empty-blocks
