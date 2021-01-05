@@ -8,8 +8,8 @@ type StateManagerOption = Record<string, any> & {
 class StateManager extends GanacheStateManager {
   public blockchain: Blockchain
 
-  constructor({ blockchain, ...options }: StateManagerOption, provider: any) {
-    super(options, provider)
+  constructor({ blockchain, ...options }: StateManagerOption) {
+    super(options)
     this.blockchain = blockchain
   }
 }

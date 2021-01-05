@@ -1,5 +1,5 @@
 import VM from 'ethereumjs-vm'
-import { BigNumber } from 'ethers'
+import { RandomnessRequest } from '../chainlink/type'
 
 export type VictimKind = 'flipcoin'
 
@@ -8,19 +8,11 @@ export type Victim = {
   kind: VictimKind
 }
 
-export type RandomnessRequestLogData = {
-  keyHash: string
-  preSeed: string
-  senderAddress: string
-  fee: BigNumber
-  requestId: string
-}
-
 export abstract class ResultChecker {
   abstract checkResult(
     vm: VM,
     futureVm: VM,
     victim: Victim,
-    logData: RandomnessRequestLogData,
+    randomnessRequest: RandomnessRequest,
   ): Promise<boolean>
 }

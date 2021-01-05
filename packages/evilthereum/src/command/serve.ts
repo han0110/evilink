@@ -36,7 +36,9 @@ const action = async (options) => {
   })
 
   server.listen(httpPort, () => {
-    logger.info(`http server listening on port ${httpPort}`)
+    logger
+      .child({ prefix: 'server' })
+      .info(`http server listening on port ${httpPort}`)
   })
 }
 

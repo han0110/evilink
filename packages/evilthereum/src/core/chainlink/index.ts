@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop, no-constant-condition */
 import ganache from 'ganache-core'
-import { Wallet } from 'ethers'
+import { Wallet } from '@ethersproject/wallet'
+import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
 import { publicKey, compressed } from '@evilink/chainlink-vrf'
 import { ChainlinkOrm, IChainlinkOrm } from '@evilink/chainlink-orm'
 import {
@@ -11,10 +12,7 @@ import {
 } from '@evilink/chainlink-client'
 import { IChainlink } from './type'
 import { retryUntilSuccess } from '../../util/retry'
-import {
-  ADDRESS_VRF_COORDINATOR,
-  FN_SIG_FULFILL_RANDOMNESS_REQUEST,
-} from '../../util/constant'
+import { ADDRESS_VRF_COORDINATOR } from '../../util/constant'
 import logger from '../../util/logger'
 
 export type ChainlinkOptions = {
@@ -25,6 +23,8 @@ export type ChainlinkOptions = {
 }
 
 export class Chainlink extends IChainlink {
+  static logger = logger.child({ prefix: Chainlink.name })
+
   static readonly VRF_KEY_PASSPHREASE_PREFIX = `don't mix VRF and Ethereum keys!`
 
   static readonly RANDOMNESS_JOB_SPEC_NAME = 'evilink_randomness'
@@ -43,20 +43,22 @@ export class Chainlink extends IChainlink {
   async initialize(ganacheProvider: ganache.Provider) {
     await retryUntilSuccess(() => this.stealPrivateKey(), 3e3, {
       beforeEach: () =>
-        logger.info('try connect to chainlink database to steal private key'),
+        Chainlink.logger.info(
+          'try connect to chainlink database to steal private key',
+        ),
       afterFailure: (error) => {
-        logger.debug(`stealPrivateKey error: ${error}`)
-        logger.info(
+        Chainlink.logger.debug(`stealPrivateKey error: ${error}`)
+        Chainlink.logger.info(
           'failed to connect to chainlink database, retry 3 seconds later...',
         )
       },
     })
     await retryUntilSuccess(() => this.ensureJobSpec(), 3e3, {
       beforeEach: () =>
-        logger.info('try connect to chainlink api to ensure job id'),
+        Chainlink.logger.info('try connect to chainlink api to ensure job id'),
       afterFailure: (error) => {
-        logger.debug(`ensureJobSpec error: ${error}`)
-        logger.info(
+        Chainlink.logger.debug(`ensureJobSpec error: ${error}`)
+        Chainlink.logger.info(
           'failed to connect to chainlink api, retry 3 seconds later...',
         )
       },
@@ -129,7 +131,9 @@ export class Chainlink extends IChainlink {
           type: 'EthTx',
           params: {
             address: ADDRESS_VRF_COORDINATOR,
-            functionSelector: FN_SIG_FULFILL_RANDOMNESS_REQUEST,
+            functionSelector: vrfCoordinatorFactory.interface.getSighash(
+              'fulfillRandomnessRequest',
+            ),
             format: 'preformatted',
           },
           confirmations: 0,

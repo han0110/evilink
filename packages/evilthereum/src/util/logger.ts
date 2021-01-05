@@ -1,8 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { format as fmt } from 'util'
-import { transports, loggers, format, Logger, LeveledLogMethod } from 'winston'
+import * as winston from 'winston'
+import { transports, loggers, format } from 'winston'
 import dayjs from 'dayjs'
 import chalk from 'chalk'
+
+declare module 'winston' {
+  interface Logger {
+    trace: winston.LeveledLogMethod
+  }
+}
 
 const LEVEL = {
   PANIC: 'panic',
@@ -24,7 +31,7 @@ const LEVEL_NUMBER = {
   [LEVEL.TRACE]: 6,
 }
 
-export const COLORIZED_LEVEL = {
+const COLORIZED_LEVEL = {
   [LEVEL.PANIC]: chalk.red(`${LEVEL.PANIC.toUpperCase()}`),
   [LEVEL.FATAL]: chalk.red(`${LEVEL.FATAL.toUpperCase()}`),
   [LEVEL.ERROR]: chalk.red(`${LEVEL.ERROR.toUpperCase()}`),
@@ -42,16 +49,20 @@ const timestampFormat = format((info) => {
   return info
 })
 
-const simpleFormat = format.printf(({ level, message, timestamp }) =>
-  fmt('%s %s %s', timestamp, COLORIZED_LEVEL[level], message),
+const simpleFormat = format.printf(
+  ({ prefix = 'ANONYMOUS', level, message, timestamp }) =>
+    fmt(
+      '%s %s %s %s',
+      timestamp,
+      COLORIZED_LEVEL[level],
+      chalk.magenta(
+        prefix.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toUpperCase(),
+      ),
+      message,
+    ),
 )
 
-type DefaultLogger = Logger & {
-  trace: LeveledLogMethod
-}
-
-// @ts-ignore
-const logger: DefaultLogger = loggers.get('default', {
+const logger = loggers.get('default', {
   levels: LEVEL_NUMBER,
   transports: [
     new transports.Console({
