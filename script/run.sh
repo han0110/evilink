@@ -63,9 +63,9 @@ exec() {
 }
 
 clean() {
-    rm -rf "${DIR_ROOT}/.chainlink/root/"*
-    rm -rf "${DIR_ROOT}/.chainlink/postgres/"*
-    rm -rf "${DIR_ROOT}/.evilthereum/chaindb/"*
+    rm -rf "${DIR_ROOT}/.chainlink/root"
+    rm -rf "${DIR_ROOT}/.chainlink/postgres"
+    rm -rf "${DIR_ROOT}/.evilthereum/chaindb"
 }
 
 main() {
