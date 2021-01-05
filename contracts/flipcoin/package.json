@@ -1,5 +1,5 @@
 {
-  "name": "@evilink/contracts-flip-coin",
+  "name": "@evilink/contracts-flipcoin",
   "version": "0.1.0",
   "main": "./lib/src/index.js",
   "exports": {

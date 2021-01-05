@@ -5,7 +5,7 @@ import { hexlify } from '@ethersproject/bytes'
 import { randomBytes } from '@ethersproject/random'
 import { generateProof, publicKey } from '@evilink/chainlink-vrf'
 import { deployChainlinkStack } from '../src/chainlink-stack'
-import { vrfConsumerFactory } from './artifact'
+import { mockVrfConsumerFactory } from './artifact'
 
 use(solidity)
 
@@ -21,7 +21,7 @@ describe('chainlink stack', () => {
 
   let mockLinkToken: Contract
   let vrfCoordinator: Contract
-  let vrfConsumer: Contract
+  let mockVrfConsumer: Contract
 
   beforeEach(async () => {
     ;({ mockLinkToken, vrfCoordinator } = await deployChainlinkStack(deployer))
@@ -34,20 +34,20 @@ describe('chainlink stack', () => {
       .to.emit(vrfCoordinator, 'NewServiceAgreement')
       .withArgs(keyHash, fee)
 
-    vrfConsumer = await vrfConsumerFactory.deploy(
+    mockVrfConsumer = await mockVrfConsumerFactory.deploy(
       deployer,
-      mockLinkToken.address,
       vrfCoordinator.address,
+      mockLinkToken.address,
       keyHash,
     )
-    expect(vrfConsumer.address).to.properAddress
+    expect(mockVrfConsumer.address).to.properAddress
   })
 
   it('should consume randomness', async () => {
     const userSeed =
       '0xa4e7cb8c8b7e26212584dc75d56a52dd86f17a9fc1024d03b73b6b8db2976844'
 
-    const tx = await vrfConsumer.consume(userSeed)
+    const tx = await mockVrfConsumer.consume(userSeed)
     await expect(Promise.resolve(tx)).to.emit(
       vrfCoordinator,
       'RandomnessRequest',
@@ -69,6 +69,6 @@ describe('chainlink stack', () => {
     await expect(
       vrfCoordinator.fulfillRandomnessRequest(packedForContractInput),
     ).to.emit(vrfCoordinator, 'RandomnessRequestFulfilled')
-    expect(await vrfConsumer.randomness()).to.equal(randomness)
+    expect(await mockVrfConsumer.randomness()).to.equal(randomness)
   })
 })
