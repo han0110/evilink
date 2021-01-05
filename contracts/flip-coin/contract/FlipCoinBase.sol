@@ -6,10 +6,11 @@ import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 abstract contract FlipCoinBase is VRFConsumerBase {
     uint256 public constant VRF_SERVICE_FEE = 10**18;
+    uint256 public constant PLAY_VALUE = 100;
 
     address internal _owner;
-    bytes32 internal _keyHash;
     uint256 internal _jackpot;
+    bytes32 internal _keyHash;
     mapping(bytes32 => address) internal _requestIdToPlayer;
     mapping(address => uint256) internal _playerToReward;
 
@@ -17,13 +18,14 @@ abstract contract FlipCoinBase is VRFConsumerBase {
         address linkToken,
         address vrfCoordinator,
         bytes32 keyHash
-    ) public VRFConsumerBase(vrfCoordinator, linkToken) {
+    ) public payable VRFConsumerBase(vrfCoordinator, linkToken) {
         _owner = msg.sender;
+        _jackpot = msg.value;
         _keyHash = keyHash;
     }
 
     function play(uint256 seed) external payable {
-        require(msg.value > 0);
+        require(msg.value >= PLAY_VALUE);
 
         bytes32 requestId = requestRandomness(_keyHash, VRF_SERVICE_FEE, seed);
         _requestIdToPlayer[requestId] = msg.sender;
@@ -44,5 +46,9 @@ abstract contract FlipCoinBase is VRFConsumerBase {
 
     function playerOf(bytes32 requestId) external view returns (address) {
         return _requestIdToPlayer[requestId];
+    }
+
+    receive() external payable {
+        _jackpot = _jackpot.add(msg.value);
     }
 }
