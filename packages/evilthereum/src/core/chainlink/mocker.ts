@@ -1,9 +1,9 @@
 import GanacheStateManager from 'ganache-core/lib/statemanager'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Wallet } from '@ethersproject/wallet'
+import { CONTRACT_ADDRESS, GAS_LIMIT } from '@evilink/constant'
 import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
 import { RandomnessRequest, IChainlink } from './type'
-import { ADDRESS_VRF_COORDINATOR, GAS_LIMIT } from '../../util/constant'
 import logger from '../../util/logger'
 
 export class ChainlinkMocker extends IChainlink {
@@ -18,8 +18,8 @@ export class ChainlinkMocker extends IChainlink {
     this.chainId = chainId
   }
 
-  setStateManager(stateManager: GanacheStateManager) {
-    this.stateManager = stateManager
+  async initialize(ganacheProvider): Promise<void> {
+    this.stateManager = ganacheProvider.manager.state
   }
 
   async onRandomnessRequest(
@@ -40,13 +40,12 @@ export class ChainlinkMocker extends IChainlink {
       from: randomWallet.address,
       nonce: 0,
       gasLimit: GAS_LIMIT,
-      gasPrice: 0,
       value: 0,
       data: vrfCoordinatorFactory.interface.encodeFunctionData(
         vrfCoordinatorFactory.interface.getFunction('fulfillRandomnessRequest'),
         [proof],
       ),
-      to: ADDRESS_VRF_COORDINATOR,
+      to: CONTRACT_ADDRESS.VRF_COORDINATOR,
       chainId: this.chainId,
     })
     return new Promise((resolve, reject) => {

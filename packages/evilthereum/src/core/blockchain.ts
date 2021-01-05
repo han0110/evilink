@@ -1,15 +1,15 @@
+import GanacheBlockchain from 'ganache-core/lib/blockchain_double'
 import VM from 'ethereumjs-vm'
 import Block from 'ethereumjs-block'
 import { Transaction } from 'ethereumjs-tx'
 import { RunBlockResult } from 'ethereumjs-vm/dist/runBlock'
-import GanacheBlockchain from 'ganache-core/lib/blockchain_double'
+import { CONTRACT_ADDRESS } from '@evilink/constant'
 import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
 import { hexZeroPad } from '@ethersproject/bytes'
 import Emittery from 'emittery'
 import RandomnessHacker from './randomness-hacker'
 import { RandomnessRequestEvent, RandomnessRequest } from './chainlink/type'
 import { decodeRawReceiptLog, copyVm } from '../util/ethereum'
-import { ADDRESS_VRF_COORDINATOR } from '../util/constant'
 import logger from '../util/logger'
 
 type ProcessBlockResult = RunBlockResult & {
@@ -43,7 +43,7 @@ class Blockchain extends GanacheBlockchain {
       ?.map(decodeRawReceiptLog)
       .filter(
         ({ address, topics: [topic] }) =>
-          address === ADDRESS_VRF_COORDINATOR &&
+          address === CONTRACT_ADDRESS.VRF_COORDINATOR &&
           topic === Blockchain.TOPIC_RANDOMNESS_REQUEST,
       )
     if (logs.length > 1) {
@@ -96,7 +96,7 @@ class Blockchain extends GanacheBlockchain {
         result,
       )
       if (randomnessRequestEvent) {
-        // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+        // eslint-disable-next-line no-param-reassign
         block.header.stateRoot = dryRanVm.stateManager._trie.root
         const randomnessRequest = {
           block,

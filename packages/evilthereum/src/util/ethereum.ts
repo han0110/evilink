@@ -1,10 +1,10 @@
 import VM from 'ethereumjs-vm'
 import Common from 'ethereumjs-common'
-import { Transaction } from 'ethereumjs-tx'
 import Block from 'ethereumjs-block'
-import { Wallet } from '@ethersproject/wallet'
+import { Transaction } from 'ethereumjs-tx'
 import { RunTxOpts } from 'ethereumjs-vm/dist/runTx'
-import { GAS_LIMIT } from './constant'
+import { Wallet } from '@ethersproject/wallet'
+import { GAS_LIMIT } from '@evilink/constant'
 
 export const bufferToHex = (buffer: Buffer): string =>
   `0x${buffer.toString('hex')}`

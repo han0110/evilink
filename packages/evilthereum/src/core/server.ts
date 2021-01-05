@@ -1,7 +1,12 @@
 import ganache from 'ganache-core'
+import {
+  ONE_MILLION_ETHER,
+  GENESIS_PRIVATE_KEY,
+  GAS_LIMIT,
+} from '@evilink/constant'
 import StateManager from './state-manager'
 import Blockchain from './blockchain'
-import migration from './migration'
+import Migration from './migration'
 import RandomnessHacker from './randomness-hacker'
 import {
   Chainlink,
@@ -9,11 +14,6 @@ import {
   ChainlinkOptions,
   IChainlink,
 } from './chainlink'
-import {
-  ONE_MILLION_ETHER,
-  PRIVATE_KEY_GENESIS,
-  GAS_LIMIT,
-} from '../util/constant'
 import rootLogger from '../util/logger'
 
 const logger = rootLogger.child({ prefix: 'server' })
@@ -31,6 +31,7 @@ export const createServer = async (
     debug: process.env.NODE_ENV !== 'production',
     logger: { log: (msg) => logger.trace(msg) },
     ws: true,
+    gasPrice: 0,
     db_path: options.chainDbPath,
     network_id: options.chainId,
     _chainId: options.chainId,
@@ -53,13 +54,12 @@ export const createServer = async (
 
   const server = ganache.server({
     ...ganacheOptions,
-    gasPrice: '0x0',
     // @ts-ignore
     state: new StateManager({
       ...ganacheOptions,
       accounts: [
         {
-          secretKey: PRIVATE_KEY_GENESIS,
+          secretKey: GENESIS_PRIVATE_KEY,
           balance: ONE_MILLION_ETHER.toString(),
         },
       ],
@@ -67,16 +67,15 @@ export const createServer = async (
     }),
   })
 
-  await migration(server.provider)
+  const success = chainlink
+    .initialize(server.provider)
+    .then(() => new Migration(server.provider, chainlink).migrate())
 
-  const success = chainlink.initialize(server.provider)
   if (chainlink instanceof ChainlinkMocker) {
-    // @ts-ignore
-    chainlink.setStateManager(server.provider.manager.state)
+    await success
     blockchain.onRandomnessRequest((randomnessRequest) =>
       (chainlink as ChainlinkMocker).onRandomnessRequest(randomnessRequest),
     )
-    await success
   }
 
   return server

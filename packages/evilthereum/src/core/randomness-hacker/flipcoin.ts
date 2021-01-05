@@ -1,12 +1,12 @@
 import VM from 'ethereumjs-vm'
 import { BigNumber } from '@ethersproject/bignumber'
 import { hexlify } from '@ethersproject/bytes'
-import { flipCoinFactory } from '@evilink/contracts-flip-coin'
+import { flipCoinFactory } from '@evilink/contracts-flipcoin'
 import { Victim, ResultChecker } from './type'
 import { RandomnessRequest } from '../chainlink/type'
 import { hashToAddress, genTxOptsFromRandom } from '../../util/ethereum'
 
-class Flipcoin implements ResultChecker {
+class FlipCoin implements ResultChecker {
   // eslint-disable-next-line class-methods-use-this
   async checkResult(
     vm: VM,
@@ -14,13 +14,13 @@ class Flipcoin implements ResultChecker {
     victim: Victim,
     randomnessRequest: RandomnessRequest,
   ): Promise<boolean> {
-    const player = await Flipcoin.getPlayer(vm, victim, randomnessRequest)
-    const rewardOfPlayer = await Flipcoin.getRewardOfPlayer(
+    const player = await FlipCoin.getPlayer(vm, victim, randomnessRequest)
+    const rewardOfPlayer = await FlipCoin.getRewardOfPlayer(
       vm,
       victim,
       player.address,
     )
-    const futureRewardOfPlayer = await Flipcoin.getRewardOfPlayer(
+    const futureRewardOfPlayer = await FlipCoin.getRewardOfPlayer(
       futureVm,
       victim,
       player.address,
@@ -85,4 +85,4 @@ class Flipcoin implements ResultChecker {
   }
 }
 
-export default Flipcoin
+export default FlipCoin

@@ -16,6 +16,7 @@
   },
   "rules": {
     "@typescript-eslint/no-unused-expressions": 0,
+    "no-underscore-dangle": 0,
     "chai-friendly/no-unused-expressions": 2
   }
 }

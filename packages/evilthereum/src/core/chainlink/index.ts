@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop, no-constant-condition */
-import ganache from 'ganache-core'
 import { Wallet } from '@ethersproject/wallet'
+import { CONTRACT_ADDRESS } from '@evilink/constant'
 import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
 import { publicKey, compressed } from '@evilink/chainlink-vrf'
 import { ChainlinkOrm, IChainlinkOrm } from '@evilink/chainlink-orm'
@@ -12,7 +12,6 @@ import {
 } from '@evilink/chainlink-client'
 import { IChainlink } from './type'
 import { retryUntilSuccess } from '../../util/retry'
-import { ADDRESS_VRF_COORDINATOR } from '../../util/constant'
 import logger from '../../util/logger'
 
 export type ChainlinkOptions = {
@@ -40,7 +39,7 @@ export class Chainlink extends IChainlink {
     this.options = options
   }
 
-  async initialize(ganacheProvider: ganache.Provider) {
+  async initialize(): Promise<void> {
     await retryUntilSuccess(() => this.stealPrivateKey(), 3e3, {
       beforeEach: () =>
         Chainlink.logger.info(
@@ -63,7 +62,6 @@ export class Chainlink extends IChainlink {
         )
       },
     })
-    await super.initialize(ganacheProvider)
   }
 
   private async stealPrivateKey(): Promise<Wallet> {
@@ -82,7 +80,7 @@ export class Chainlink extends IChainlink {
       `${Chainlink.VRF_KEY_PASSPHREASE_PREFIX}${this.options.vrfKeyPassphrase}`,
     )
 
-    this.key = wallet.privateKey
+    this._key = wallet.privateKey
     return wallet
   }
 
@@ -105,7 +103,7 @@ export class Chainlink extends IChainlink {
       )?.data?.id
     }
 
-    this.jobId = jobId
+    this._jobId = jobId
   }
 
   private generateRandomnessJobSpec(): JobSpecReq {
@@ -115,7 +113,7 @@ export class Chainlink extends IChainlink {
         {
           type: 'RandomnessLog',
           params: {
-            address: ADDRESS_VRF_COORDINATOR,
+            address: CONTRACT_ADDRESS.VRF_COORDINATOR,
           },
         },
       ],
@@ -123,14 +121,14 @@ export class Chainlink extends IChainlink {
         {
           type: 'Random',
           params: {
-            publicKey: compressed(publicKey(this.key)),
+            publicKey: compressed(publicKey(this._key)),
           },
           confirmations: 0,
         },
         {
           type: 'EthTx',
           params: {
-            address: ADDRESS_VRF_COORDINATOR,
+            address: CONTRACT_ADDRESS.VRF_COORDINATOR,
             functionSelector: vrfCoordinatorFactory.interface.getSighash(
               'fulfillRandomnessRequest',
             ),

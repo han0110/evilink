@@ -5,18 +5,18 @@ import Block from 'ethereumjs-block'
 import GanacheGethApiDouble from 'ganache-core/lib/subproviders/geth_api_double'
 import { BigNumber } from '@ethersproject/bignumber'
 import { randomBytes } from '@ethersproject/random'
+import { CONTRACT_ADDRESS } from '@evilink/constant'
 import { vrfCoordinatorFactory } from '@evilink/contracts-chainlink'
 import { VictimKind, Victim, ResultChecker } from './type'
 import { IChainlink } from '../chainlink'
 import { RandomnessRequest } from '../chainlink/type'
-import Flipcoin from './flipcoin'
+import FlipCoin from './flipcoin'
 import {
   hexToBuffer,
   bufferToHex,
   genTxOptsFromRandom,
   copyVm,
 } from '../../util/ethereum'
-import { ADDRESS_VRF_COORDINATOR } from '../../util/constant'
 import logger from '../../util/logger'
 
 class RandomnessHacker {
@@ -50,7 +50,7 @@ class RandomnessHacker {
           ),
           [proof],
         ),
-        ADDRESS_VRF_COORDINATOR,
+        CONTRACT_ADDRESS.VRF_COORDINATOR,
         vm.opts.common,
         new Block([nextHeader, [], []]),
       ),
@@ -67,7 +67,7 @@ class RandomnessHacker {
     this.chainlink = chainlink
     this.victims = {}
     this.resultCheckers = {
-      flipcoin: new Flipcoin(),
+      flipcoin: new FlipCoin(),
     }
 
     GanacheGethApiDouble.prototype.chainlink_addVictim = (
