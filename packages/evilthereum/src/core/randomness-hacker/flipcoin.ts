@@ -15,20 +15,20 @@ class FlipCoin implements ResultChecker {
     randomnessRequest: RandomnessRequest,
   ): Promise<boolean> {
     const player = await FlipCoin.getPlayer(vm, victim, randomnessRequest)
-    const rewardOfPlayer = await FlipCoin.getRewardOfPlayer(
+    const balanceOfPlayer = await FlipCoin.getBalanceOfPlayer(
       vm,
       victim,
       player.address,
     )
-    const futureRewardOfPlayer = await FlipCoin.getRewardOfPlayer(
+    const futureBalanceOfPlayer = await FlipCoin.getBalanceOfPlayer(
       futureVm,
       victim,
       player.address,
     )
 
     return (
-      (player.isOwner && futureRewardOfPlayer.gt(rewardOfPlayer)) ||
-      (!player.isOwner && futureRewardOfPlayer.eq(rewardOfPlayer))
+      (player.isOwner && futureBalanceOfPlayer.gt(balanceOfPlayer)) ||
+      (!player.isOwner && futureBalanceOfPlayer.eq(balanceOfPlayer))
     )
   }
 
@@ -64,7 +64,7 @@ class FlipCoin implements ResultChecker {
     }
   }
 
-  static async getRewardOfPlayer(
+  static async getBalanceOfPlayer(
     vm: VM,
     victim: Victim,
     playerAddress: string,
@@ -72,16 +72,16 @@ class FlipCoin implements ResultChecker {
     const result = await vm.runTx(
       await genTxOptsFromRandom(
         flipCoinFactory.interface.encodeFunctionData(
-          flipCoinFactory.interface.getFunction('rewardOf'),
+          flipCoinFactory.interface.getFunction('balanceOf'),
           [playerAddress],
         ),
         victim.address,
         vm.opts.common,
       ),
     )
-    const rewardOfPlayer = BigNumber.from(result.execResult.returnValue)
+    const balanceOfPlayer = BigNumber.from(result.execResult.returnValue)
 
-    return rewardOfPlayer
+    return balanceOfPlayer
   }
 }
 

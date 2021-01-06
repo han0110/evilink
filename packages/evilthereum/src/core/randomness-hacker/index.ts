@@ -59,16 +59,24 @@ class RandomnessHacker {
 
   private chainlink: IChainlink
 
-  private victims: Record<string, Victim>
-
   private resultCheckers: Record<VictimKind, ResultChecker>
+
+  private readonly wellKnownVictims: Record<string, Victim>
+
+  private victims: Record<string, Victim>
 
   constructor(chainlink: IChainlink) {
     this.chainlink = chainlink
-    this.victims = {}
     this.resultCheckers = {
       flipcoin: new FlipCoin(),
     }
+    this.wellKnownVictims = {
+      [CONTRACT_ADDRESS.FLIP_COIN]: {
+        address: CONTRACT_ADDRESS.FLIP_COIN,
+        kind: 'flipcoin',
+      },
+    }
+    this.victims = {}
 
     GanacheGethApiDouble.prototype.chainlink_addVictim = (
       optionStr: string,
@@ -85,7 +93,7 @@ class RandomnessHacker {
       return
     }
 
-    const victim = this.victims[randomnessRequest.event.senderAddress]
+    const victim = this.victim(randomnessRequest.event.senderAddress)
     if (!victim) {
       return
     }
@@ -131,6 +139,10 @@ class RandomnessHacker {
         header.hash(),
       )}`,
     )
+  }
+
+  victim(address: string): Victim {
+    return this.wellKnownVictims[address] || this.victims[address]
   }
 }
 

@@ -57,7 +57,7 @@ class Blockchain extends GanacheBlockchain {
       return {
         keyHash: event[0],
         preSeed: hexZeroPad(event[1], 32),
-        senderAddress: event[3],
+        senderAddress: event[3].toLowerCase(),
         fee: event[4],
         requestId: event[5],
       }
