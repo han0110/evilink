@@ -1,12 +1,11 @@
 {
   "name": "evilink",
-  "license": "MIT",
   "scripts": {
     "build": "yarn workspaces foreach run build",
     "test": "yarn workspaces foreach run test",
-    "lint:ts": "eslint --ignore-path .gitignore '{contracts,evilthereum}/**/*.ts'",
+    "lint:ts": "eslint '{contracts,evilthereum}/**/*.ts'",
     "lint:sol": "solhint --ignore-path contracts/.gitignore contracts/**/*.sol",
-    "prettier": "prettier --check '{contracts,evilthereum}/**/*.{ts,sol}' --ignore-path .gitignore"
+    "prettier": "prettier --check '{contracts,evilthereum}/**/*.{ts,sol}' --ignore-path .eslintignore"
   },
   "engines": {
     "node": ">=14"
@@ -34,5 +33,6 @@
   "dependencies": {
     "ethereum-types": "^3.4.0",
     "ethers": "^5.0.24"
-  }
+  },
+  "license": "MIT"
 }

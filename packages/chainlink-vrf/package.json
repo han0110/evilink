@@ -1,7 +1,6 @@
 {
   "name": "@evilink/chainlink-vrf",
   "version": "0.1.0",
-  "license": "MIT",
   "private": true,
   "gypfile": true,
   "main": "./lib/index.js",
@@ -22,5 +21,6 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^8.2.1"
-  }
+  },
+  "license": "MIT"
 }

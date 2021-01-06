@@ -1,7 +1,6 @@
 {
   "name": "@evilink/constant",
   "version": "0.1.0",
-  "license": "MIT",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js"
@@ -14,5 +13,6 @@
   },
   "devDependencies": {
     "typescript": "^4.1.3"
-  }
+  },
+  "license": "MIT"
 }

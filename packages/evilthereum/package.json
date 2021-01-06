@@ -1,7 +1,6 @@
 {
   "name": "@evilink/evilthereum",
   "version": "0.1.0",
-  "license": "MIT",
   "scripts": {
     "build": "tsc -b",
     "start": "NODE_ENV=production node lib",
@@ -38,9 +37,9 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.0",
     "nodemon": "^2.0.6",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
-  }
+  },
+  "license": "MIT"
 }

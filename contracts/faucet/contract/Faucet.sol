@@ -26,7 +26,7 @@ contract Faucet {
         _withdrawBlockNumber[to] = block.number;
 
         // Interaction
-        (bool success, ) = to.call{value: amount}("");
+        (bool success, ) = to.call{value: amount}(""); // solhint-disable-line avoid-low-level-calls
         require(success, "CALL_FAILURE");
     }
 
