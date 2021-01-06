@@ -15,8 +15,9 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "@typescript-eslint/no-unused-expressions": 0,
-    "no-underscore-dangle": 0,
-    "chai-friendly/no-unused-expressions": 2
+    "prettier/prettier": "error",
+    "chai-friendly/no-unused-expressions": "error",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "no-underscore-dangle": "off"
   }
 }

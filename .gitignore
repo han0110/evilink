@@ -2,6 +2,7 @@
 
 lib
 build
+.next
 
 node_modules/
 .yarn/cache

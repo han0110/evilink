@@ -3,9 +3,9 @@
   "scripts": {
     "build": "yarn workspaces foreach run build",
     "test": "yarn workspaces foreach run test",
-    "lint:ts": "eslint '{contracts,evilthereum}/**/*.ts'",
+    "lint:ts": "eslint '{contracts,packages}/**/*.{ts,tsx}'",
     "lint:sol": "solhint --ignore-path contracts/.gitignore contracts/**/*.sol",
-    "prettier": "prettier --check '{contracts,evilthereum}/**/*.{ts,sol}' --ignore-path .eslintignore"
+    "prettier": "prettier --check '{contracts,packages}/**/*.{ts,tsx,sol}' --ignore-path .eslintignore"
   },
   "engines": {
     "node": ">=14"
