@@ -32,6 +32,8 @@ config() {
 }
 
 up() {
+    # make initdb.d script executable for postgresql initialization
+    [ ! -d "$DIR_ROOT/.postgres/data" ] && chmod +x "$DIR_ROOT/.postgres/initdb.d/"*.sh
     env_docker_compose up -d "$@"
 }
 
@@ -40,7 +42,7 @@ down() {
 }
 
 exec() {
-    TARGET_CONTAINER_NAME=$1
+    TARGET_CONTAINER_NAME=$1; shift
     if [ -z "$TARGET_CONTAINER_NAME" ]; then echo "container name is required" && exit 1; fi
 
     ALL_CONTAINERS=()
@@ -59,13 +61,15 @@ exec() {
         exit 1
     fi
 
-    docker exec -it "$TARGET_CONTAINER_ID" /bin/bash
+    ENTRYPOINT=${1:-/bin/bash}
+    docker exec -it "$TARGET_CONTAINER_ID" "$ENTRYPOINT"
 }
 
 clean() {
     rm -rf "${DIR_ROOT}/.chainlink/root"
-    rm -rf "${DIR_ROOT}/.chainlink/postgres"
     rm -rf "${DIR_ROOT}/.evilthereum/chaindb"
+    rm -rf "${DIR_ROOT}/.ipfs/data"
+    rm -rf "${DIR_ROOT}/.postgres/data"
 }
 
 main() {

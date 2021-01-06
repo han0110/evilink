@@ -2,17 +2,31 @@ version: '3.8'
 services:
   postgres:
     image: postgres:12.5
-    ports:
-    - 5433:5432
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      CHAINLINK_USER: ${CHAINLINK_USER}
+      CHAINLINK_PASSWORD: ${CHAINLINK_PASSWORD}
+      CHAINLINK_DB: ${CHAINLINK_DB}
+      THE_GRAPH_USER: ${THE_GRAPH_USER}
+      THE_GRAPH_PASSWORD: ${THE_GRAPH_PASSWORD}
+      THE_GRAPH_DB: ${THE_GRAPH_DB}
     volumes:
-    - ../.chainlink/postgres:/var/lib/postgresql/data
+    - ../.postgres/data:/var/lib/postgresql/data
+    - ../.postgres/initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+    volumes:
+    - ../.ipfs/data:/data/ipfs
+    healthcheck:
+      test: ["CMD-SHELL", "ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/readme"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,7 +51,7 @@ services:
     - CHAIN_DB_PATH=${CHAIN_DB_PATH}
     - CHAINLINK_API_DSN=http://chainlink:6688
     - CHAINLINK_API_AUTH_FILE=/run/secrets/api.txt
-    - CHAINLINK_DATABASE_DSN=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    - CHAINLINK_DATABASE_DSN=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
     - CHAINLINK_VRF_KEY_PASSPHRASE_FILE=/run/secrets/passphrase.txt
   chainlink:
     image: smartcontract/chainlink:latest
@@ -76,8 +90,30 @@ services:
     - CHAINLINK_TLS_PORT=0
     - SECURE_COOKIES=false
     - ALLOW_ORIGINS=*
-    - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    - DATABASE_URL=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
     - DATABASE_TIMEOUT=0
+  graph-node:
+    image: graphprotocol/graph-node:v0.20.0
+    ports:
+    - 8000:8000
+    - 8001:8001
+    - 8020:8020
+    - 8030:8030
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+      evilthereum:
+        condition: service_started
+    environment:
+      postgres_host: postgres
+      postgres_user: ${THE_GRAPH_USER}
+      postgres_pass: ${THE_GRAPH_PASSWORD}
+      postgres_db: ${THE_GRAPH_DB}
+      ipfs: ipfs:5001
+      ethereum: evilthereum:http://evilthereum:8545
+      RUST_LOG: info
 secrets:
   api.txt:
     file: ../.chainlink/secret/api.txt
