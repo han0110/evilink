@@ -6,6 +6,7 @@ schema:
 dataSources:
 - kind: ethereum/contract
   name: FlipCoin
+  network: evilthereum
   source:
     address: '0xc81eafcd71ce25123929bdd3854d915226e73e15'
     abi: FlipCoin

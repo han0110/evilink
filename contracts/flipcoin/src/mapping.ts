@@ -1,13 +1,12 @@
 /* eslint-disable eqeqeq, prefer-const, @typescript-eslint/no-use-before-define, import/prefer-default-export, import/no-extraneous-dependencies */
 
 import { BigInt } from '@graphprotocol/graph-ts'
-
+import { FlipCoin, Player, PlayEvent } from '../generated/schema'
 import {
   OwnershipTransferred,
   Subsidized,
   Played,
 } from '../generated/FlipCoin/FlipCoin'
-import { FlipCoin, Player, PlayEvent } from '../generated/schema'
 
 const GENESIS_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -49,12 +48,18 @@ export function handlePlayed(event: Played): void {
   let player = Player.load(event.params.player.toHex())
   if (player == null) {
     player = new Player(event.params.player.toHex())
+    player.address = event.params.player
+    player.balance = ZERO
+    player.netReward = ZERO
+    player.playCount = ZERO
+    player.playWinCount = ZERO
+    player.playLostCount = ZERO
   }
 
   player.playCount = player.playCount.plus(ONE)
   if (event.params.side) {
     flipCoin.jackpot = flipCoin.jackpot.minus(TWO_HUNDRED)
-    player.netReward = player.balance.plus(TWO_HUNDRED)
+    player.balance = player.balance.plus(TWO_HUNDRED)
     player.netReward = player.netReward.plus(ONE_HUNDRED)
     player.playWinCount = player.playWinCount.plus(ONE)
   } else {

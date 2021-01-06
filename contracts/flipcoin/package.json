@@ -14,9 +14,9 @@
     "flatten": "waffle flatten ../waffle-0.6",
     "graph:codegen": "graph codegen",
     "graph:build": "graph build",
-    "graph:create": "graph create --node http://localhost:8020 @evilink/contracts-flipcoin",
-    "graph:remove": "graph remove --node http://localhost:8020 @evilink/contracts-flipcoin",
-    "graph:deploy": "graph deploy --node http://localhost:8020 --ipfs http://localhost:5001 @evilink/contracts-flipcoin",
+    "graph:create": "graph create --node http://localhost:8020 flipcoin",
+    "graph:remove": "graph remove --node http://localhost:8020 flipcoin",
+    "graph:deploy": "graph deploy --node http://localhost:8020 --ipfs http://localhost:5001 flipcoin",
     "clean": "rm -rf lib contract-artifact"
   },
   "dependencies": {
