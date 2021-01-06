@@ -18,12 +18,16 @@ contract FlipCoin is FlipCoinBase {
         address player = _requestIdToPlayer[requestId];
         require(player != address(0));
 
-        if (randomness & 1 == 0) {
-            uint256 reward = 2 * PLAY_VALUE;
-            _playerToReward[player] = _playerToReward[player].add(reward);
-            _jackpot = _jackpot.sub(reward);
+        bool side = (randomness & 1) == 1;
+        if (side) {
+            _playerToBalance[player] = _playerToBalance[player].add(
+                PLAY_REWARD
+            );
+            _jackpot = _jackpot.sub(PLAY_REWARD);
         }
 
         delete _requestIdToPlayer[requestId];
+
+        emit Played(player, side);
     }
 }

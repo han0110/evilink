@@ -12,6 +12,11 @@
     "test": "NODE_ENV=test mocha --require ts-node/register -t 5000 ./test/**/*.test.ts",
     "test:watch": "yarn test --watch --watch-files ./test/**/*.test.ts,./build/*.json",
     "flatten": "waffle flatten ../waffle-0.6",
+    "graph:codegen": "graph codegen",
+    "graph:build": "graph build",
+    "graph:create": "graph create --node http://localhost:8020 @evilink/contracts-flipcoin",
+    "graph:remove": "graph remove --node http://localhost:8020 @evilink/contracts-flipcoin",
+    "graph:deploy": "graph deploy --node http://localhost:8020 --ipfs http://localhost:5001 @evilink/contracts-flipcoin",
     "clean": "rm -rf lib contract-artifact"
   },
   "dependencies": {
@@ -21,6 +26,8 @@
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.19.0",
+    "@graphprotocol/graph-ts": "^0.19.0",
     "@types/mocha": "^8.2.0",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.2.1",

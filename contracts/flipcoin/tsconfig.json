@@ -3,5 +3,6 @@
   "compilerOptions": {
     "outDir": "lib"
   },
+  "exclude": ["src/mapping.ts"],
   "include": ["src/**/*"]
 }

@@ -1,0 +1,21 @@
+type FlipCoin @entity {
+  id: ID!
+  owner: Bytes!
+  jackpot: BigInt!
+}
+
+type Player @entity {
+  id: ID!
+  address: Bytes!
+  balance: BigInt!
+  netReward: BigInt!
+  playCount: BigInt!
+  playWinCount: BigInt!
+  playLostCount: BigInt!
+}
+
+type PlayEvent @entity {
+  id: ID!
+  player: Bytes!
+  side: Boolean!
+}
