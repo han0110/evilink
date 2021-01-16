@@ -35,7 +35,7 @@ services:
   evilthereum:
     image: evilthereum
     ports:
-    - 8545:8545
+    - ${RPC_PORT}:${RPC_PORT}
     restart: always
     depends_on:
       postgres:
@@ -48,7 +48,7 @@ services:
     environment:
     # NOTE: uncomment for debug
     # - NODE_ENV=debug
-    - HTTP_PORT=8545
+    - HTTP_PORT=${RPC_PORT}
     - CHAIN_ID=${CHAIN_ID}
     - CHAIN_DB_PATH=${CHAIN_DB_PATH}
     - CHAINLINK_API_DSN=http://chainlink:6688
@@ -82,7 +82,7 @@ services:
     environment:
     - ROOT=/chainlink
     - LOG_LEVEL=debug
-    - ETH_URL=ws://evilthereum:8545
+    - ETH_URL=ws://evilthereum:${RPC_PORT}
     - ETH_CHAIN_ID=${CHAIN_ID}
     - ETH_GAS_PRICE_DEFAULT=0
     - GAS_UPDATER_ENABLED=false
@@ -114,7 +114,7 @@ services:
       postgres_pass: ${THE_GRAPH_PASSWORD}
       postgres_db: ${THE_GRAPH_DB}
       ipfs: ipfs:5001
-      ethereum: evilthereum:http://evilthereum:8545
+      ethereum: evilthereum:http://evilthereum:${RPC_PORT}
       RUST_LOG: info
 secrets:
   api.txt:
