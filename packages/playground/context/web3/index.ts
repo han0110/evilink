@@ -2,7 +2,6 @@ import { useRef, useEffect, createElement, PropsWithChildren } from 'react'
 import { Web3ReactProvider } from '@web3-react/core'
 import { GetLibrary, getLibraryAsync } from './util'
 
-// eslint-disable-next-line import/prefer-default-export
 export const Web3Provider = ({ children }: PropsWithChildren<{}>) => {
   const getLibraryRef = useRef<GetLibrary>(() => ({}))
 
@@ -17,3 +16,6 @@ export const Web3Provider = ({ children }: PropsWithChildren<{}>) => {
     children,
   })
 }
+
+export { UnsupportedChainIdError } from '@web3-react/core'
+export * from './connector'

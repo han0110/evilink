@@ -1869,6 +1869,7 @@ __metadata:
     ramda: ^0.27.1
     react: ^17.0.1
     react-dom: ^17.0.1
+    react-jazzicon: ^0.1.3
     subscriptions-transport-ws: ^0.9.18
     typescript: ^4.1.3
     ws: ^7.4.2
@@ -5581,7 +5582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1":
+"color-convert@npm:^1.3.0, color-convert@npm:^1.9.0, color-convert@npm:^1.9.1":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
@@ -5613,6 +5614,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"color-string@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "color-string@npm:0.3.0"
+  dependencies:
+    color-name: ^1.0.0
+  checksum: 5e5a0004b81541dfc84f6a826c12e2b683260190f21884c048e67ab453a6dac2467da47d68e32dd85ae8944e52e4557a59b43dfcc20af3aa359d0f029d106214
+  languageName: node
+  linkType: hard
+
 "color-string@npm:^1.5.2, color-string@npm:^1.5.4":
   version: 1.5.4
   resolution: "color-string@npm:1.5.4"
@@ -5630,6 +5640,17 @@ __metadata:
     color-convert: ^1.9.1
     color-string: ^1.5.2
   checksum: 55f17792ef8c2796a192c299df0ac7a2a3466f21c9692a60e09975a2f662df47a0fb5624df2b0dba3a29b0198fdcb3c095ec0e2efe98f1847fedadf74701404d
+  languageName: node
+  linkType: hard
+
+"color@npm:^0.11.0":
+  version: 0.11.4
+  resolution: "color@npm:0.11.4"
+  dependencies:
+    clone: ^1.0.2
+    color-convert: ^1.3.0
+    color-string: ^0.3.0
+  checksum: 81ec590160b1923363c14034cebffe28e148a0c507326b4f131526f8c2e1a0354773fd8245762623876b37f0a552c7b1800388c900839ab3e56ffda291c7693f
   languageName: node
   linkType: hard
 
@@ -12103,6 +12124,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"mersenne-twister@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "mersenne-twister@npm:1.1.0"
+  checksum: e95c91184cd42cf7e4d86722a4f322fd70e95b9bc164b96409e2280abea38c9f82205611c07b5d964cd8d5220633d8f0266e8f5a52b951eea25f02d75aaaf275
+  languageName: node
+  linkType: hard
+
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -14421,7 +14449,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"prop-types@npm:15.7.2, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:15.7.2, prop-types@npm:^15.5.10, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -14843,6 +14871,19 @@ fsevents@~2.1.2:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 11bcf1267a314a522615f626f3ce3727a3a24cdbf61c4d452add3550a7875326669631326cfb1ba3e92b6f72244c32ffecf93ad21c0cad8455d3e169d0e3f060
+  languageName: node
+  linkType: hard
+
+"react-jazzicon@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "react-jazzicon@npm:0.1.3"
+  dependencies:
+    color: ^0.11.0
+    mersenne-twister: ^1.1.0
+    prop-types: ^15.5.10
+  peerDependencies:
+    react: ^15.3.2
+  checksum: 7bd4b65b87501b24f09e694b9f9638a1b0d3036d843694ef03dc54e6ca3518e588ac343fee241ffc9d61a6cc0d99a0e560d1e1f3c2e64393689418888342c7e8
   languageName: node
   linkType: hard
 

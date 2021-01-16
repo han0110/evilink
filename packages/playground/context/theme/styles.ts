@@ -1,7 +1,7 @@
 const styles = {
   global: {
     body: {
-      fontFamily: 'Lato, sans-serif',
+      fontFamily: 'Courier, monospace',
     },
     '#__next': {
       minH: '100vh',

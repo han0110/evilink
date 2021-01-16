@@ -1,6 +1,10 @@
 import React from 'react'
-import { Box, Heading } from '@chakra-ui/react'
 import { useQuery, useSubscription, gql } from '@apollo/client'
+import { Grid, GridItem } from '@chakra-ui/react'
+// Component
+import Layout from '~/component/Layout'
+import FlipCoin from '~/component/FlipCoin/FlipCoin'
+import LeaderBoard from '~/component/FlipCoin/LeaderBoard'
 
 const QUERY_ALL = gql`
   query {
@@ -38,17 +42,31 @@ const SUBSCRIBE_PLAYER = gql`
 const FlipCoinPage = () => {
   const query = useQuery(QUERY_ALL)
   const subscription = useSubscription(SUBSCRIBE_PLAYER)
-
-  if (query.loading || subscription.loading) return <Box>Loading...</Box>
-  if (query.error || subscription.error) return <Box>Error :(</Box>
-
+  // Render
   return (
-    <Box>
-      <Heading>Query</Heading>
-      <Box>{JSON.stringify(query.data, null, 2)}</Box>
-      <Heading>Subscription</Heading>
-      <Box>{JSON.stringify(subscription.data, null, 2)}</Box>
-    </Box>
+    <Layout
+      mainProps={{
+        maxW: ['90vw', '80rem'],
+        display: 'flex',
+        alignItems: 'stretch',
+      }}
+    >
+      <Grid
+        my="5"
+        flex={1}
+        templateRows={['0 max-content 1fr', '0 max-content 1fr', 'auto']}
+        templateColumns={['auto', 'auto', '1fr minmax(200px, max-content) 1fr']}
+        gap={[4, 4, 10]}
+      >
+        <GridItem />
+        <GridItem alignSelf="center">
+          <FlipCoin />
+        </GridItem>
+        <GridItem>
+          <LeaderBoard query={query} subscription={subscription} />
+        </GridItem>
+      </Grid>
+    </Layout>
   )
 }
 

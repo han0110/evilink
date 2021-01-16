@@ -28,6 +28,8 @@
     "react/jsx-props-no-spreading": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
-    "import/extensions": "off"
+    "import/prefer-default-export": "off",
+    "import/extensions": "off",
+    "chai-friendly/no-unused-expressions": "off"
   }
 }

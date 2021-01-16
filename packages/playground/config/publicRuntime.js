@@ -5,7 +5,7 @@ const config = {
   },
   ethereum: {
     chainId: 3777,
-    rpcEndpoint: 'http://localhost:8545',
+    rpcEndpoint: 'http://localhost:8577',
   },
 }
 

@@ -6,7 +6,7 @@ const { withPlugins, optional } = require('next-compose-plugins')
 const publicRuntimeConfig = require('./config/publicRuntime')
 
 const config = {
-  trailingSlash: true,
+  trailingSlash: false,
   reactStrictMode: true,
   publicRuntimeConfig,
 }
