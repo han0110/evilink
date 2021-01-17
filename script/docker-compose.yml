@@ -21,6 +21,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+    - internal
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
@@ -32,8 +34,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+    - internal
   evilthereum:
-    image: evilthereum
+    image: evilink/evilthereum
     ports:
     - ${RPC_PORT}:${RPC_PORT}
     restart: always
@@ -55,6 +59,16 @@ services:
     - CHAINLINK_API_AUTH_FILE=/run/secrets/api.txt
     - CHAINLINK_DATABASE_DSN=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
     - CHAINLINK_VRF_KEY_PASSPHRASE_FILE=/run/secrets/passphrase.txt
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.evilthereum.entrypoints=websecure
+    - traefik.http.routers.evilthereum.tls.certresolver=tlschallenge
+    - traefik.http.routers.evilthereum.service=evilthereum
+    - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_ENDPOINT}`)
+    - traefik.http.services.evilthereum.loadbalancer.server.port=${RPC_PORT}
   chainlink:
     image: smartcontract/chainlink:latest
     ports:
@@ -94,6 +108,8 @@ services:
     - ALLOW_ORIGINS=*
     - DATABASE_URL=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
     - DATABASE_TIMEOUT=0
+    networks:
+    - internal
   graph-node:
     image: graphprotocol/graph-node:v0.20.0
     ports:
@@ -116,8 +132,53 @@ services:
       ipfs: ipfs:5001
       ethereum: evilthereum:http://evilthereum:${RPC_PORT}
       RUST_LOG: info
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.graph-node-http.entrypoints=websecure
+    - traefik.http.routers.graph-node-http.tls.certresolver=tlschallenge
+    - traefik.http.routers.graph-node-http.service=graph-node-http
+    - traefik.http.routers.graph-node-http.rule=Host(`${THE_GRAPH_HTTP_ENDPOINT}`)
+    - traefik.http.services.graph-node-http.loadbalancer.server.port=8000
+    - traefik.http.routers.graph-node-ws.entrypoints=websecure
+    - traefik.http.routers.graph-node-ws.tls.certresolver=tlschallenge
+    - traefik.http.routers.graph-node-ws.service=graph-node-ws
+    - traefik.http.routers.graph-node-ws.rule=Host(`${THE_GRAPH_WS_ENDPOINT}`)
+    - traefik.http.services.graph-node-ws.loadbalancer.server.port=8001
+  playground:
+    image: evilink/playground
+    ports:
+    - 3000:3000
+    depends_on:
+      evilthereum:
+        condition: service_started
+      graph-node:
+        condition: service_started
+    environment:
+    - THE_GRAPH_HTTP_ENDPOINT=${THE_GRAPH_HTTP_ENDPOINT}
+    - THE_GRAPH_WS_ENDPOINT=${THE_GRAPH_WS_ENDPOINT}
+    - ETHEREUM_CHAIN_ID=${CHAIN_ID}
+    - ETHEREUM_RPC_ENDPOINT=${EVILTHEREUM_RPC_ENDPOINT}
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.playground.entrypoints=websecure
+    - traefik.http.routers.playground.tls.certresolver=tlschallenge
+    - traefik.http.routers.playground.service=playground
+    - traefik.http.routers.playground.rule=Host(`${PLAYGROUND_HTTP_ENDPOINT}`)
+    - traefik.http.services.playground.loadbalancer.server.port=3000
 secrets:
   api.txt:
     file: ../.chainlink/secret/api.txt
   passphrase.txt:
     file: ../.chainlink/secret/passphrase.txt
+networks:
+  internal:
+    name: internal
+  reverse-proxy:
+    external:
+      name: reverse-proxy

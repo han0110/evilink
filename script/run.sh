@@ -22,9 +22,10 @@ env_docker_compose() {
 }
 
 build() {
-    local WORKSPACE_NAME="@evilink/evilthereum"
-    yarn workspace "${WORKSPACE_NAME}" build
-    yarn docker build "${WORKSPACE_NAME}" "$@" -t evilthereum
+    for PACKAGE in "evilthereum" "playground"; do
+        yarn workspace "@evilink/${PACKAGE}" build
+        yarn docker build "@evilink/${PACKAGE}" "$@" -t "evilink/${PACKAGE}"
+    done
 }
 
 config() {
