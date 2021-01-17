@@ -8,6 +8,11 @@ EVILink shows that a malicious miner still has a slim chance to tamper randomnes
     - [Proof of Concept](#proof-of-concept)
     - [Rethink](#rethink)
     - [Take Away](#take-away)
+  - [Packages](#packages)
+    - [Contracts](#contracts)
+    - [Common Utilities](#common-utilities)
+    - [Chainlink Utilities](#chainlink-utilities)
+    - [Applications](#applications)
   - [Development](#development)
     - [Prerequisite](#prerequisite)
     - [Prepare](#prepare)
@@ -52,6 +57,38 @@ But before the upcoming approach, we can still use current version VRF with some
 
 1. Contracts should have a mechanism (by voting or by admin) to change the VRF service once current one is thought malicious or key leaked.
 2. Contracts could request multiple randomness in **one transaciton** and combine incoming randomnesses over threshold to be final randomness to act like threshold signature approach, but it costs much more both time and LINK.
+
+## Packages
+
+### Contracts
+
+| Package                                                        | Description                         |
+| -------------------------------------------------------------- | ----------------------------------- |
+| [`@evilink/contracts-chainlink`](/contracts/chainlink)         | Chainlink related contracts         |
+| [`@evilink/contracts-faucet`](/contracts/faucet)               | Faucet contract for ether           |
+| [`@evilink/contracts-flipcoin`](/contracts/flipcoin)           | Coin tossing game using VRFConsumer |
+
+### Common Utilities
+
+| Package                                             | Description                                              |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| [`@evilink/artifact-util`](/packages/artifact-util) | Artifact util for contract factory                       |
+| [`@evilink/constant`](/packages/constant)           | Constant including contract address, genesis private key |
+
+### Chainlink Utilities
+
+| Package                                                   | Description                                           |
+| --------------------------------------------------------- | ----------------------------------------------------- |
+| [`@evilink/chainlink-client`](/packages/chainlink-client) | Chainlink API client                                  |
+| [`@evilink/chainlink-orm`](/packages/chainlink-orm)       | Chainlink ORM client                                  |
+| [`@evilink/chainlink-vrf`](/packages/chainlink-vrf)       | Chainlink VRF implementation in golang as gyp binding |
+
+### Applications
+
+| Package                                         | Description                                               |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| [`@evilink/evilthereum`](/packages/evilthereum) | Malicious miner with VRF key hacking VRFConsumers         |
+| [`@evilink/playground`](/packages/playground)   | Frontend for interaction with hacked contracts            |
 
 ## Development
 
