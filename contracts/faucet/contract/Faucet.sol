@@ -18,7 +18,7 @@ contract Faucet {
         require(
             amount <= 1 ether &&
                 (_withdrawBlockNumber[to] == 0 ||
-                    _withdrawBlockNumber[to] > block.number + 10),
+                    block.number < _withdrawBlockNumber[to] + 10),
             "TOO_GREEDY"
         );
 
