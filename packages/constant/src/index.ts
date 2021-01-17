@@ -1,5 +1,9 @@
-import { WeiPerEther } from '@ethersproject/constants'
+import { WeiPerEther, AddressZero, HashZero } from '@ethersproject/constants'
 
+export const ZERO_ADDRESS = AddressZero
+export const ZERO_HASH = HashZero
+
+export const ONE_ETHER = WeiPerEther
 export const ONE_MILLION_ETHER = WeiPerEther.mul(1e6)
 
 export const GAS_LIMIT = 1e7
