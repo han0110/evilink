@@ -119,7 +119,7 @@ const FlipCoin = ({ subscription }: FlipCoinProps) => {
   }, [interactStage, setInteractStage, setShowResult, unsetShowResult])
   // Effect
   useEffect(() => {
-    if (account) {
+    if (account && interactStage === 'flipping') {
       const player = subscription.data?.players?.find(
         ({ address }) => address === account,
       )
