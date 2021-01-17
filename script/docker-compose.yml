@@ -25,8 +25,9 @@ services:
     - internal
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
-    ports:
-    - 5001:5001
+    # NOTE: uncomment for development and subgraph deployment
+    # ports:
+    # - 5001:5001
     volumes:
     - ../.ipfs/data:/data/ipfs
     healthcheck:
@@ -38,8 +39,9 @@ services:
     - internal
   evilthereum:
     image: evilink/evilthereum
-    ports:
-    - ${RPC_PORT}:${RPC_PORT}
+    # NOTE: uncomment for debug
+    # ports:
+    # - ${RPC_PORT}:${RPC_PORT}
     restart: always
     depends_on:
       postgres:
@@ -67,12 +69,13 @@ services:
     - traefik.http.routers.evilthereum.entrypoints=websecure
     - traefik.http.routers.evilthereum.tls.certresolver=tlschallenge
     - traefik.http.routers.evilthereum.service=evilthereum
-    - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_ENDPOINT}`)
+    - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_HOST}`)
     - traefik.http.services.evilthereum.loadbalancer.server.port=${RPC_PORT}
   chainlink:
     image: smartcontract/chainlink:latest
-    ports:
-    - 6688:6688
+    # NOTE: uncomment for development
+    # ports:
+    # - 6688:6688
     restart: always
     depends_on:
       postgres:
@@ -112,11 +115,13 @@ services:
     - internal
   graph-node:
     image: graphprotocol/graph-node:v0.20.0
-    ports:
-    - 8000:8000
-    - 8001:8001
-    - 8020:8020
-    - 8030:8030
+    # NOTE: uncomment for development
+    # ports:
+    # - 8000:8000
+    # - 8001:8001
+    # NOTE: uncomment for development and subgraph deployment
+    # - 8020:8020
+    # - 8030:8030
     depends_on:
       postgres:
         condition: service_healthy
@@ -140,27 +145,28 @@ services:
     - traefik.http.routers.graph-node-http.entrypoints=websecure
     - traefik.http.routers.graph-node-http.tls.certresolver=tlschallenge
     - traefik.http.routers.graph-node-http.service=graph-node-http
-    - traefik.http.routers.graph-node-http.rule=Host(`${THE_GRAPH_HTTP_ENDPOINT}`)
+    - traefik.http.routers.graph-node-http.rule=Host(`${THE_GRAPH_HTTP_HOST}`)
     - traefik.http.services.graph-node-http.loadbalancer.server.port=8000
     - traefik.http.routers.graph-node-ws.entrypoints=websecure
     - traefik.http.routers.graph-node-ws.tls.certresolver=tlschallenge
     - traefik.http.routers.graph-node-ws.service=graph-node-ws
-    - traefik.http.routers.graph-node-ws.rule=Host(`${THE_GRAPH_WS_ENDPOINT}`)
+    - traefik.http.routers.graph-node-ws.rule=Host(`${THE_GRAPH_WS_HOST}`)
     - traefik.http.services.graph-node-ws.loadbalancer.server.port=8001
   playground:
     image: evilink/playground
-    ports:
-    - 3000:3000
+    # NOTE: uncomment for development
+    # ports:
+    # - 3000:3000
     depends_on:
       evilthereum:
         condition: service_started
       graph-node:
         condition: service_started
     environment:
-    - THE_GRAPH_HTTP_ENDPOINT=${THE_GRAPH_HTTP_ENDPOINT}
-    - THE_GRAPH_WS_ENDPOINT=${THE_GRAPH_WS_ENDPOINT}
+    - THE_GRAPH_HTTP_ENDPOINT=${HTTP_PROTOCOL}://${THE_GRAPH_HTTP_HOST}
+    - THE_GRAPH_WS_ENDPOINT=${HTTP_PROTOCOL}://${THE_GRAPH_WS_HOST}
     - ETHEREUM_CHAIN_ID=${CHAIN_ID}
-    - ETHEREUM_RPC_ENDPOINT=${EVILTHEREUM_RPC_ENDPOINT}
+    - ETHEREUM_RPC_ENDPOINT=${HTTP_PROTOCOL}://${EVILTHEREUM_RPC_HOST}
     networks:
     - internal
     - reverse-proxy
@@ -169,7 +175,7 @@ services:
     - traefik.http.routers.playground.entrypoints=websecure
     - traefik.http.routers.playground.tls.certresolver=tlschallenge
     - traefik.http.routers.playground.service=playground
-    - traefik.http.routers.playground.rule=Host(`${PLAYGROUND_HTTP_ENDPOINT}`)
+    - traefik.http.routers.playground.rule=Host(`${PLAYGROUND_HTTP_HOST}`)
     - traefik.http.services.playground.loadbalancer.server.port=3000
 secrets:
   api.txt:
