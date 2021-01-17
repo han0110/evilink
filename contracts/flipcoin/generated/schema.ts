@@ -136,13 +136,13 @@ export class Player extends Entity {
     this.set("playWinCount", Value.fromBigInt(value));
   }
 
-  get playLostCount(): BigInt {
-    let value = this.get("playLostCount");
+  get playLoseCount(): BigInt {
+    let value = this.get("playLoseCount");
     return value.toBigInt();
   }
 
-  set playLostCount(value: BigInt) {
-    this.set("playLostCount", Value.fromBigInt(value));
+  set playLoseCount(value: BigInt) {
+    this.set("playLoseCount", Value.fromBigInt(value));
   }
 }
 

@@ -11,7 +11,7 @@ type Player @entity {
   netReward: BigInt!
   playCount: BigInt!
   playWinCount: BigInt!
-  playLostCount: BigInt!
+  playLoseCount: BigInt!
 }
 
 type PlayEvent @entity {

@@ -53,7 +53,7 @@ export function handlePlayed(event: Played): void {
     player.netReward = ZERO
     player.playCount = ZERO
     player.playWinCount = ZERO
-    player.playLostCount = ZERO
+    player.playLoseCount = ZERO
   }
 
   player.playCount = player.playCount.plus(ONE)
@@ -65,7 +65,7 @@ export function handlePlayed(event: Played): void {
   } else {
     flipCoin.jackpot = flipCoin.jackpot.plus(ONE_HUNDRED)
     player.netReward = player.netReward.minus(ONE_HUNDRED)
-    player.playLostCount = player.playLostCount.plus(ONE)
+    player.playLoseCount = player.playLoseCount.plus(ONE)
   }
 
   flipCoin.save()
