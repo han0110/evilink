@@ -17,7 +17,7 @@
   "dependencies": {
     "@ethersproject/constants": "^5.0.7",
     "@ethersproject/contracts": "^5.0.8",
-    "@evilink/contracts-artifact-util": "0.1.0",
+    "@evilink/artifact-util": "0.1.0",
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {

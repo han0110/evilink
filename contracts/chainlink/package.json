@@ -27,8 +27,8 @@
     "@ethersproject/providers": "^5.0.17",
     "@ethersproject/random": "^5.0.6",
     "@ethersproject/wallet": "^5.0.9",
+    "@evilink/artifact-util": "0.1.0",
     "@evilink/chainlink-vrf": "0.1.0",
-    "@evilink/contracts-artifact-util": "0.1.0",
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {

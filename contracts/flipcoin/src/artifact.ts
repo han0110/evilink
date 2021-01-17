@@ -2,7 +2,7 @@ import {
   createContractFactory,
   StandardContractOutput,
   ContractFactory,
-} from '@evilink/contracts-artifact-util'
+} from '@evilink/artifact-util'
 
 import * as FlipCoin from '../contract-artifact/FlipCoin.json'
 

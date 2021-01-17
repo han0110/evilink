@@ -2490,6 +2490,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@evilink/artifact-util@0.1.0, @evilink/artifact-util@workspace:packages/artifact-util":
+  version: 0.0.0-use.local
+  resolution: "@evilink/artifact-util@workspace:packages/artifact-util"
+  dependencies:
+    "@ethersproject/contracts": ^5.0.8
+    "@ethersproject/wallet": ^5.0.9
+    ethereum-types: ^3.4.0
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
 "@evilink/chainlink-client@0.1.0, @evilink/chainlink-client@workspace:packages/chainlink-client":
   version: 0.0.0-use.local
   resolution: "@evilink/chainlink-client@workspace:packages/chainlink-client"
@@ -2530,17 +2541,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@evilink/contracts-artifact-util@0.1.0, @evilink/contracts-artifact-util@workspace:contracts/artifact-util":
-  version: 0.0.0-use.local
-  resolution: "@evilink/contracts-artifact-util@workspace:contracts/artifact-util"
-  dependencies:
-    "@ethersproject/contracts": ^5.0.8
-    "@ethersproject/wallet": ^5.0.9
-    ethereum-types: ^3.4.0
-    typescript: ^4.1.3
-  languageName: unknown
-  linkType: soft
-
 "@evilink/contracts-chainlink@0.1.0, @evilink/contracts-chainlink@workspace:contracts/chainlink":
   version: 0.0.0-use.local
   resolution: "@evilink/contracts-chainlink@workspace:contracts/chainlink"
@@ -2552,8 +2552,8 @@ __metadata:
     "@ethersproject/providers": ^5.0.17
     "@ethersproject/random": ^5.0.6
     "@ethersproject/wallet": ^5.0.9
+    "@evilink/artifact-util": 0.1.0
     "@evilink/chainlink-vrf": 0.1.0
-    "@evilink/contracts-artifact-util": 0.1.0
     "@openzeppelin/contracts": ^3.3.0
     "@types/mocha": ^8.2.0
     chai: ^4.2.0
@@ -2571,7 +2571,7 @@ __metadata:
   dependencies:
     "@ethersproject/constants": ^5.0.7
     "@ethersproject/contracts": ^5.0.8
-    "@evilink/contracts-artifact-util": 0.1.0
+    "@evilink/artifact-util": 0.1.0
     "@openzeppelin/contracts": ^3.3.0
     "@types/mocha": ^8.2.0
     chai: ^4.2.0
@@ -2588,7 +2588,7 @@ __metadata:
   resolution: "@evilink/contracts-flipcoin@workspace:contracts/flipcoin"
   dependencies:
     "@ethersproject/contracts": ^5.0.8
-    "@evilink/contracts-artifact-util": 0.1.0
+    "@evilink/artifact-util": 0.1.0
     "@evilink/contracts-chainlink": 0.1.0
     "@graphprotocol/graph-cli": ^0.19.0
     "@graphprotocol/graph-ts": ^0.19.0
@@ -2598,20 +2598,6 @@ __metadata:
     ethereum-waffle: ^3.2.1
     mocha: ^8.2.1
     nodemon: ^2.0.6
-    ts-node: ^9.1.1
-    typescript: ^4.1.3
-  languageName: unknown
-  linkType: soft
-
-"@evilink/e2e@workspace:packages/e2e":
-  version: 0.0.0-use.local
-  resolution: "@evilink/e2e@workspace:packages/e2e"
-  dependencies:
-    "@evilink/constant": 0.1.0
-    "@evilink/contracts-chainlink": 0.1.0
-    "@evilink/contracts-faucet": 0.1.0
-    "@evilink/contracts-flipcoin": 0.1.0
-    ethers: ^5.0.24
     ts-node: ^9.1.1
     typescript: ^4.1.3
   languageName: unknown

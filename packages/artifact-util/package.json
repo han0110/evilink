@@ -1,5 +1,5 @@
 {
-  "name": "@evilink/contracts-artifact-util",
+  "name": "@evilink/artifact-util",
   "version": "0.1.0",
   "main": "./lib/index.js",
   "exports": {

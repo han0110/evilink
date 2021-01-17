@@ -2,7 +2,7 @@ import {
   createContractFactory,
   StandardContractOutput,
   ContractFactory,
-} from '@evilink/contracts-artifact-util'
+} from '@evilink/artifact-util'
 
 import * as MockVRFConsumer from '../contract-artifact/MockVRFConsumer.json'
 
