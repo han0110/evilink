@@ -16,6 +16,10 @@ COMMANDS=(
     exec
     clean
 )
+BUILD_TARGETS=(
+    evilthereum
+    playground
+)
 
 env_docker_compose() {
     # shellcheck disable=SC2046
@@ -24,10 +28,10 @@ env_docker_compose() {
 }
 
 build() {
-    for PACKAGE in "evilthereum" "playground"; do
-        yarn workspace "@evilink/${PACKAGE}" build
-        yarn docker build "@evilink/${PACKAGE}" "$@" -t "evilink/${PACKAGE}"
-    done
+    PACKAGE="$1"; shift
+    help_if_command_not_found "${BUILD_TARGETS[@]}" "$PACKAGE"
+    yarn workspace "@evilink/$PACKAGE" build
+    yarn docker build "@evilink/$PACKAGE" -t "evilink/$PACKAGE" "$@"
 }
 
 config() {

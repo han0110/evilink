@@ -19,7 +19,7 @@ help_if_command_not_found() {
         fi
     done
 
-    printf 'please specify commands below:\n'
+    printf 'invalid command %s, please specify one of below:\n' "$TARGET"
     printf '  * %s\n' "${CMDS[@]:0:${#CMDS[@]}-1}"
     exit 1
 }
