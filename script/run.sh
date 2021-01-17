@@ -7,6 +7,9 @@ DIR_ROOT="$(dirname "${BASH_SOURCE[0]}")/.."
 # shellcheck disable=SC1090
 source "$DIR_ROOT/script/util.sh"
 
+ENV="$DIR_ROOT/script/docker-compose.env"
+ENV_SAMPLE="$DIR_ROOT/script/docker-compose.sample.env"
+
 PROJECT_NAME="evilink"
 COMMANDS=(
     build
@@ -22,8 +25,9 @@ BUILD_TARGETS=(
 )
 
 env_docker_compose() {
+    [ ! -f "$ENV" ] && cp "$ENV_SAMPLE" "$ENV"
     # shellcheck disable=SC2046
-    env $(grep -v '^#' "$DIR_ROOT"/script/docker-compose.env) \
+    env $(grep -v '^#' "$ENV") \
         docker-compose -p "$PROJECT_NAME" -f "$DIR_ROOT"/script/docker-compose.yml "$@"
 }
 

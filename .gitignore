@@ -11,4 +11,6 @@ node_modules/
 .yarn/install-state.gz
 yarn-error.log
 
+docker-compose.env
+
 .DS_Store
