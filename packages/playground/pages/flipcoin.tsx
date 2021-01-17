@@ -19,6 +19,7 @@ const FlipCoinPage = () => {
     <>
       <Head>
         <link rel="shortcut icon" href="/favicon/flipcoin.ico" />
+        <title>Flipy</title>
       </Head>
       <Layout
         mainProps={{

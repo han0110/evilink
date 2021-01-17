@@ -275,7 +275,7 @@ const FlippingCoin = ({
           $thickness={SIZE_PARAMETER[size].$thickness}
           $beforeBorderWidth={SIZE_PARAMETER[size].$borderWidth}
           $contentFontSize={SIZE_PARAMETER[size].$contentFontSize}
-          $content="$"
+          $content="Ξ"
         />
         <SideInner $side="front" $thickness={SIZE_PARAMETER[size].$thickness} />
         <SideInner $side="back" $thickness={SIZE_PARAMETER[size].$thickness} />
