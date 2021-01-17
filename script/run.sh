@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 DIR_ROOT="$(dirname "${BASH_SOURCE[0]}")/.."
 
 # shellcheck disable=SC1090

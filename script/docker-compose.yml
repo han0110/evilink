@@ -72,7 +72,7 @@ services:
     - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_HOST}`)
     - traefik.http.services.evilthereum.loadbalancer.server.port=${RPC_PORT}
   chainlink:
-    image: smartcontract/chainlink:latest
+    image: han0110/chainlink:latest
     # NOTE: uncomment for development
     # ports:
     # - 6688:6688
