@@ -22,10 +22,10 @@
   "dependencies": {
     "@ethersproject/contracts": "^5.0.8",
     "@evilink/contracts-artifact-util": "0.1.0",
-    "@evilink/contracts-chainlink": "0.1.0",
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {
+    "@evilink/contracts-chainlink": "0.1.0",
     "@graphprotocol/graph-cli": "^0.19.0",
     "@graphprotocol/graph-ts": "^0.19.0",
     "@types/mocha": "^8.2.0",
