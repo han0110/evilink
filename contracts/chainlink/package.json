@@ -6,7 +6,8 @@
     ".": "./lib/src/index.js"
   },
   "scripts": {
-    "build": "yarn compile && tsc -b",
+    "build": "yarn compile && yarn build:ts",
+    "build:ts": "tsc -b",
     "compile": "yarn compile:0.4 && yarn compile:0.6",
     "compile:0.4": "CONTRACT_SRC_DIR=./contract-0.4 waffle compile ../waffle-0.4",
     "compile:0.4:watch": "nodemon --exec 'CONTRACT_SRC_DIR=./contract-0.4 waffle compile ../waffle-0.4' --watch ./contract-0.4 --ext sol",

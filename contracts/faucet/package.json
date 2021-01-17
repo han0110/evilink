@@ -6,7 +6,8 @@
     ".": "./lib/src/index.js"
   },
   "scripts": {
-    "build": "yarn compile && tsc -b",
+    "build": "yarn compile && yarn build:ts",
+    "build:ts": "tsc -b",
     "compile": "waffle compile ../waffle-0.8",
     "compile:watch": "nodemon --exec 'waffle compile ../waffle-0.8' --watch contract --ext sol",
     "test": "NODE_ENV=test mocha --require ts-node/register -t 5000 ./test/**/*.test.ts",
