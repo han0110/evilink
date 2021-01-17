@@ -99,7 +99,7 @@ const LeaderBoard = ({ subscription }: LeaderBoardProps) => {
                 </Td>
                 <Td>
                   <HStack>
-                    <JazzIcon address={ZERO_ADDRESS} size="1.5em" />
+                    <JazzIcon address={ZERO_ADDRESS} size="1em" />
                     <Text>
                       <Skeleton w="7.5em" h="1em" />
                     </Text>

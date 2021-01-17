@@ -114,7 +114,7 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create Wallet</ModalHeader>
+        <ModalHeader>Connect Wallet</ModalHeader>
         <ModalBody>
           <VStack alignItems="stretch" spacing={5}>
             {connectors.map((connector) => {
@@ -151,7 +151,7 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
               <AlertIcon />
               <VStack overflowX="hidden">
                 <Text>Remember to checkout to network</Text>
-                <Box pl="1em" w="100%">
+                <Box pl={['1em', '1.75em']} w="100%">
                   <UnorderedList>
                     <ListItem>
                       Chain ID:{' '}
