@@ -1,18 +1,21 @@
-import { useRef, useEffect, createElement, PropsWithChildren } from 'react'
+import { useState, useEffect, createElement, PropsWithChildren } from 'react'
 import { Web3ReactProvider } from '@web3-react/core'
 import { GetLibrary, getLibraryAsync } from './util'
 
 export const Web3Provider = ({ children }: PropsWithChildren<{}>) => {
-  const getLibraryRef = useRef<GetLibrary>(() => ({}))
-
+  // Local state
+  const [options, setOptions] = useState<{ getLibrary: GetLibrary }>({
+    getLibrary: () => ({}),
+  })
+  // Effect
   useEffect(() => {
     getLibraryAsync().then((getLibrary) => {
-      getLibraryRef.current = getLibrary
+      setOptions({ getLibrary })
     })
-  }, [])
-
+  }, [setOptions])
+  // Render
   return createElement(Web3ReactProvider, {
-    getLibrary: getLibraryRef.current,
+    getLibrary: options.getLibrary,
     children,
   })
 }

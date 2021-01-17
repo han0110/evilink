@@ -1,23 +1,33 @@
 import React from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-import { ThemeProvider } from '~/context/theme'
+// Context
 import { ApolloProvider } from '~/context/apollo'
+import { ThemeProvider } from '~/context/theme'
 import { Web3Provider } from '~/context/web3'
+// Config
+import config from '~/config'
 
-const App = ({ Component, pageProps }: AppProps) => (
+const App = ({ Component, pageProps, router: { pathname } }: AppProps) => (
   <>
     <Head>
       <title>EVILink Playground</title>
     </Head>
     <ThemeProvider>
-      <ApolloProvider>
-        <Web3Provider>
+      <Web3Provider>
+        <ApolloProvider
+          options={{
+            wsUri: `${config.theGraph.wsEndpoint}/subgraphs/name${pathname}`,
+            httpUri: `${config.theGraph.httpEndpoint}/subgraphs/name${pathname}`,
+          }}
+        >
           <Component {...pageProps} />
-        </Web3Provider>
-      </ApolloProvider>
+        </ApolloProvider>
+      </Web3Provider>
     </ThemeProvider>
   </>
 )
+
+App.getInitialProps = async () => ({})
 
 export default App

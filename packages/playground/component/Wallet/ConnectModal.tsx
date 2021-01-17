@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   Button,
   Box,
@@ -20,6 +20,9 @@ import {
   UnorderedList,
   ListItem,
 } from '@chakra-ui/react'
+import { Wallet } from '@ethersproject/wallet'
+import { faucetFactory } from '@evilink/contracts-faucet'
+import { CONTRACT_ADDRESS, ONE_ETHER } from '@evilink/constant'
 // Context
 import {
   connectors,
@@ -46,7 +49,14 @@ type ConnectModalProps = {
 
 const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
   // Global state
-  const { activate, connected, connector: currentConnector } = useWeb3()
+  const {
+    account,
+    library,
+    activate,
+    deactivate,
+    connected,
+    connector: currentConnector,
+  } = useWeb3()
   // Local state
   const [connecting, setConnecting, unsetConnecting] = useBool()
   const [invalidChainId, setInvalidChainId, unsetInvalidChainId] = useBool()
@@ -79,6 +89,26 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
       unsetInvalidChainId,
     ],
   )
+  const ensureSufficientBalance = useCallback(async () => {
+    if (account && library) {
+      const balance = await library.getBalance(account)
+      if (balance?.isZero()) {
+        try {
+          await faucetFactory
+            .attach(CONTRACT_ADDRESS.FAUCET)
+            .connect(Wallet.createRandom().connect(library))
+            .withdrawTo(account, ONE_ETHER)
+        } catch {
+          // noop
+        }
+      }
+    }
+  }, [account, library])
+  // Effect
+  useEffect(() => {
+    ensureSufficientBalance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
   // Render
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -87,30 +117,36 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
         <ModalHeader>Create Wallet</ModalHeader>
         <ModalBody>
           <VStack alignItems="stretch" spacing={5}>
-            {connectors.map((connector) => (
-              <Button
-                key={connector.id}
-                display="flex"
-                justifyContent="flex-start"
-                padding="0.5em 1em"
-                height="auto"
-                onClick={() => onConnect(connector)}
-                disabled={!connector.available || connecting}
-              >
-                <HStack spacing={3} flex={1}>
-                  {walletIcon[connector.id]}
-                  <Text>{connector.id}</Text>
-                  <Spacer />
-                  {!connector.available ? (
-                    <Tag colorScheme="red">not found</Tag>
-                  ) : invalidChainId ? (
-                    <Tag colorScheme="red">invalid chain id</Tag>
-                  ) : connected && connector.instance === currentConnector ? (
-                    <Tag colorScheme="green">connected</Tag>
-                  ) : null}
-                </HStack>
-              </Button>
-            ))}
+            {connectors.map((connector) => {
+              const isCurrentConnector =
+                connected && connector.instance === currentConnector
+              return (
+                <Button
+                  key={connector.id}
+                  display="flex"
+                  justifyContent="flex-start"
+                  padding="0.5em 1em"
+                  height="auto"
+                  onClick={() =>
+                    isCurrentConnector ? deactivate() : onConnect(connector)
+                  }
+                  disabled={!connector.available || connecting}
+                >
+                  <HStack spacing={3} flex={1}>
+                    {walletIcon[connector.id]}
+                    <Text>{connector.id}</Text>
+                    <Spacer />
+                    {!connector.available ? (
+                      <Tag colorScheme="red">not found</Tag>
+                    ) : invalidChainId ? (
+                      <Tag colorScheme="red">wrong chain id</Tag>
+                    ) : isCurrentConnector ? (
+                      <Tag colorScheme="green">connected</Tag>
+                    ) : null}
+                  </HStack>
+                </Button>
+              )
+            })}
             <Alert status="info" borderRadius="0.5em">
               <AlertIcon />
               <VStack>

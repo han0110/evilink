@@ -1,11 +1,12 @@
 const config = {
-  backend: {
-    httpEndpoint: 'http://localhost:8000/subgraphs/name/flipcoin',
-    wsEndpoint: 'ws://localhost:8001/subgraphs/name/flipcoin',
+  theGraph: {
+    httpEndpoint:
+      process.env.THE_GRAPH_HTTP_ENDPOINT || 'http://localhost:8000',
+    wsEndpoint: process.env.THE_GRAPH_WS_ENDPOINT || 'ws://localhost:8001',
   },
   ethereum: {
-    chainId: 3777,
-    rpcEndpoint: 'http://localhost:8577',
+    chainId: parseInt(process.env.ETHEREUM_CHAIN_ID, 10) || 3777,
+    rpcEndpoint: process.env.ETHEREUM_RPC_ENDPOINT || 'http://localhost:8577',
   },
 }
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/react'
 import { Box } from '@chakra-ui/react'
 import {
   useMotionValue,
@@ -30,20 +29,7 @@ const SIZE_PARAMETER = {
   },
 }
 
-const options = {
-  shouldForwardProp: (key: string) => !key.startsWith('$'),
-}
-
-const rotate = keyframes`
-  0% {
-    transform: rotateY(0);
-  }
-  100% {
-    transform: rotateY(360deg);
-  }
-`
-
-const Wrapper = styled(MotionBox, options)`
+const Wrapper = styled(MotionBox)`
   width: ${(props) => props.$diameter};
   height: ${(props) => props.$diameter};
   transform-style: preserve-3d;
@@ -51,8 +37,6 @@ const Wrapper = styled(MotionBox, options)`
   right: 0;
   bottom: 0;
   left: 0;
-  /* animation: 10s linear infinite;
-  animation-name: ${rotate}; */
 
   &::before {
     content: '';
@@ -126,7 +110,8 @@ export type FlippingCoinVariant = 'noninteractive' | 'interactive'
 
 export type FlippingCoinInteractStage =
   | 'ready'
-  | 'rotating'
+  | 'flipping'
+  | 'to-ready'
   | 'to-head'
   | 'to-tail'
 
@@ -158,9 +143,10 @@ const FlippingCoin = ({
   const nextControlCreator = useRef<() => { stop: () => void }>()
   const deg = useMotionValue(0)
   const transform = useMotionTemplate`rotateY(${deg}deg)`
+  const [clockwise, setClockwise] = useState<-1 | 1>(-1)
   // Event
   const onPan = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (currentInteractStage === 'ready') {
+    if (currentInteractStage === 'ready' && interactStage === 'ready') {
       deg.set(deg.get() + info.delta.x)
     }
   }
@@ -172,10 +158,16 @@ const FlippingCoin = ({
     info: PanInfo,
   ) => {
     unsetDisallowScroll()
-    if (currentInteractStage === 'ready') {
-      let duration = Math.min(Math.max(100 / Math.abs(info.velocity.x), 0.2), 1)
+    const velocity = Math.abs(info.velocity.x)
+    const newClockwise = info.velocity.x > 0 ? 1 : -1
+    if (
+      currentInteractStage === 'ready' &&
+      interactStage === 'ready' &&
+      velocity > 100
+    ) {
+      let duration = Math.max(100 / velocity, 0.2)
       const createAnimate = () =>
-        animate(deg, deg.get() + 360, {
+        animate(deg, deg.get() + newClockwise * 360, {
           repeat: Infinity,
           duration,
           ease: 'linear',
@@ -192,7 +184,8 @@ const FlippingCoin = ({
           },
         })
       controls.current = createAnimate()
-      setCurrentInteractStage('rotating')
+      setCurrentInteractStage('flipping')
+      setClockwise(newClockwise)
       onFlip?.(event, info)
     }
   }
@@ -222,26 +215,42 @@ const FlippingCoin = ({
     return () => {}
   }, [disallowScroll])
   useEffect(() => {
-    if (
-      currentInteractStage === 'rotating' &&
-      (interactStage === 'to-head' || interactStage === 'to-tail')
-    ) {
-      setCurrentInteractStage(interactStage)
-
-      nextControlCreator.current = () => {
-        let toDeg = Math.ceil(deg.get() / 360) * 360 + 360
-        if (interactStage === 'to-tail') {
-          toDeg += 180
-        }
-        return animate(deg, toDeg, {
-          duration: 3,
-          ease: [0.66, 0.61, 0.58, 1],
-          onComplete: () => {
-            deg.set(toDeg % 360)
-            setCurrentInteractStage('ready')
-            onFlipEnd?.()
+    if (currentInteractStage === 'flipping') {
+      if (interactStage === 'to-ready') {
+        setCurrentInteractStage(interactStage)
+        controls.current = animate(
+          deg,
+          clockwise * (Math.ceil(Math.abs(deg.get()) / 360) * 360 + 360),
+          {
+            duration: 1,
+            ease: [0.66, 0.61, 0.58, 1],
+            onComplete: () => {
+              deg.set(0)
+              setCurrentInteractStage('ready')
+              onFlipEnd?.()
+            },
           },
-        })
+        )
+      }
+      if (interactStage === 'to-head' || interactStage === 'to-tail') {
+        setCurrentInteractStage(interactStage)
+
+        nextControlCreator.current = () => {
+          let toDeg =
+            clockwise * (Math.ceil(Math.abs(deg.get()) / 360) * 360 + 360)
+          if (interactStage === 'to-tail') {
+            toDeg += clockwise * 180
+          }
+          return animate(deg, toDeg, {
+            duration: 3,
+            ease: [0.66, 0.61, 0.58, 1],
+            onComplete: () => {
+              deg.set(toDeg % 360)
+              setCurrentInteractStage('ready')
+              onFlipEnd?.()
+            },
+          })
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,10 +1,12 @@
-import { createElement, PropsWithChildren } from 'react'
+import { createElement, FC } from 'react'
 import { ApolloProvider as BaseApolloProvider } from '@apollo/client'
-import { createClient } from './client'
+import { createClient, CreateClientOptions } from './client'
 
-// eslint-disable-next-line import/prefer-default-export
-export const ApolloProvider = ({ children }: PropsWithChildren<{}>) =>
+export const ApolloProvider: FC<{ options: CreateClientOptions }> = ({
+  children,
+  options,
+}) =>
   createElement(BaseApolloProvider, {
-    client: createClient(),
+    client: createClient(options),
     children,
   })

@@ -3,13 +3,17 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { OperationDefinitionNode } from 'graphql'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
-import config from '~/config'
 import { isServer } from '~/util/env'
 
-// eslint-disable-next-line import/prefer-default-export
-export const createClient = () =>
-  new ApolloClient({
-    link: split(
+export type CreateClientOptions = {
+  httpUri: string
+  wsUri?: string
+}
+
+export const createClient = (options: CreateClientOptions) => {
+  let link
+  if (options.wsUri) {
+    link = split(
       ({ query }) => {
         const { kind, operation } = getMainDefinition(
           query,
@@ -18,14 +22,20 @@ export const createClient = () =>
       },
       new WebSocketLink(
         new SubscriptionClient(
-          config.backend.wsEndpoint,
+          options.wsUri.replace(/(http)(s)?:\/\//, 'ws$2://'),
           {
             reconnect: true,
           },
           isServer() && require('ws'), // eslint-disable-line global-require
         ),
       ),
-      new HttpLink({ uri: config.backend.httpEndpoint }),
-    ),
+      new HttpLink({ uri: options.httpUri }),
+    )
+  } else {
+    link = new HttpLink({ uri: options.httpUri })
+  }
+  return new ApolloClient({
+    link,
     cache: new InMemoryCache(),
   })
+}
