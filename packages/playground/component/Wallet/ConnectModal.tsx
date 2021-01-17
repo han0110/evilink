@@ -147,11 +147,11 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
                 </Button>
               )
             })}
-            <Alert status="info" borderRadius="0.5em">
+            <Alert status="info" borderRadius="0.5em" overflowX="hidden">
               <AlertIcon />
-              <VStack>
+              <VStack overflowX="hidden">
                 <Text>Remember to checkout to network</Text>
-                <Box pl="1em">
+                <Box pl="1em" w="100%">
                   <UnorderedList>
                     <ListItem>
                       Chain ID:{' '}

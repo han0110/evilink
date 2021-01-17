@@ -9,6 +9,16 @@ const config = {
   trailingSlash: false,
   reactStrictMode: true,
   publicRuntimeConfig,
+  // NOTE: Temperary workaround for not-implemented homepage
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/flipcoin',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 const plugins = [
