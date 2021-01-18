@@ -1,0 +1,31 @@
+specVersion: 0.0.2
+description: Play coin tossing to earn ether
+repository: https://github.com/han0110/evilink
+schema:
+  file: ./schema.graphql
+dataSources:
+- kind: ethereum/contract
+  name: FlipCoin
+  network: evilthereum
+  source:
+    address: '0xc81eafcd71ce25123929bdd3854d915226e73e15'
+    abi: FlipCoin
+  mapping:
+    kind: ethereum/events
+    apiVersion: 0.0.4
+    language: wasm/assemblyscript
+    entities:
+    - Jackpot
+    - Player
+    - PlayEvent
+    abis:
+    - name: FlipCoin
+      file: ./contract-artifact/FlipCoin.json
+    eventHandlers:
+    - event: OwnershipTransferred(indexed address,indexed address)
+      handler: handleOwnershipTransferred
+    - event: Subsidized(address,uint256)
+      handler: handleSubsidized
+    - event: Played(address,bool)
+      handler: handlePlayed
+    file: ./src/mapping.ts

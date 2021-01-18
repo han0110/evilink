@@ -1,0 +1,35 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "jsx-a11y",
+    "react",
+    "react-hooks",
+    "prettier"
+  ],
+  "extends": [
+    "airbnb-typescript",
+    "airbnb/hooks",
+    "prettier",
+    "prettier/react",
+    "prettier/@typescript-eslint"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "react/jsx-props-no-spreading": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "import/prefer-default-export": "off",
+    "import/extensions": "off",
+    "chai-friendly/no-unused-expressions": "off"
+  }
+}

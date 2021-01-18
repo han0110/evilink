@@ -1,0 +1,60 @@
+{
+  "name": "@evilink/playground",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "codegen:graphql": "graphql-codegen --config ./graphql-config.yml"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.3.6",
+    "@chakra-ui/react": "^1.0.3",
+    "@chakra-ui/theme": "^1.2.2",
+    "@chakra-ui/theme-tools": "^1.0.2",
+    "@emotion/react": "^11.1.2",
+    "@emotion/styled": "^11.0.0",
+    "@ethersproject/keccak256": "^5.0.7",
+    "@ethersproject/providers": "^5.0.17",
+    "@ethersproject/wallet": "^5.0.10",
+    "@evilink/constant": "workspace:packages/constant",
+    "@evilink/contracts-faucet": "workspace:contracts/faucet",
+    "@evilink/contracts-flipcoin": "workspace:contracts/flipcoin",
+    "@web3-react/abstract-connector": "^6.0.7",
+    "@web3-react/core": "^6.1.1",
+    "beautiful-react-hooks": "^0.31.0",
+    "framer-motion": "^2.9.5",
+    "graphql": "^15.4.0",
+    "next": "^10.0.3",
+    "next-compose-plugins": "^2.2.1",
+    "ramda": "^0.27.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-jazzicon": "^0.1.3",
+    "subscriptions-transport-ws": "^0.9.18",
+    "ws": "^7.4.2"
+  },
+  "devDependencies": {
+    "@emotion/babel-plugin": "^11.1.2",
+    "@graphql-codegen/typescript": "^1.20.0",
+    "@next/bundle-analyzer": "^10.0.4",
+    "@types/node": "^14.14.13",
+    "@types/ramda": "^0.27.33",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-redux": "^7.1.14",
+    "@types/webpack-env": "^1.16.0",
+    "@types/ws": "^7.4.0",
+    "@web3-react/injected-connector": "^6.0.7",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "typescript": "^4.1.3"
+  },
+  "resolutions": {
+    "webpack": "^5.11.1"
+  },
+  "license": "MIT"
+}

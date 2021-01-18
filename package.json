@@ -1,0 +1,38 @@
+{
+  "name": "evilink",
+  "scripts": {
+    "build": "yarn workspaces foreach run build",
+    "test": "yarn workspaces foreach run test",
+    "lint:ts": "eslint '{contracts,packages}/**/*.{ts,tsx}'",
+    "lint:sol": "solhint --ignore-path contracts/.gitignore contracts/**/*.sol",
+    "prettier": "prettier --check '{contracts,packages}/**/*.{ts,tsx,sol}' --ignore-path .eslintignore"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "workspaces": [
+    "contracts/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-typescript": "^12.0.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-chai-friendly": "^0.6.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.2",
+    "solhint": "^3.3.2",
+    "solhint-plugin-prettier": "^0.0.5"
+  },
+  "dependencies": {
+    "ethereum-types": "^3.4.0",
+    "ethers": "^5.0.24"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,190 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:12.5
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      CHAINLINK_USER: ${CHAINLINK_USER}
+      CHAINLINK_PASSWORD: ${CHAINLINK_PASSWORD}
+      CHAINLINK_DB: ${CHAINLINK_DB}
+      THE_GRAPH_USER: ${THE_GRAPH_USER}
+      THE_GRAPH_PASSWORD: ${THE_GRAPH_PASSWORD}
+      THE_GRAPH_DB: ${THE_GRAPH_DB}
+    volumes:
+    - ../.postgres/data:/var/lib/postgresql/data
+    - ../.postgres/initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+    - internal
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+    # NOTE: uncomment for development and subgraph deployment
+    # ports:
+    # - 5001:5001
+    volumes:
+    - ../.ipfs/data:/data/ipfs
+    healthcheck:
+      test: ["CMD-SHELL", "ipfs cat /ipfs/QmQPeNsJPyVWPFDVHb77w8G42Fvo15z4bG2X8D2GhfbSXc/readme"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+    - internal
+  evilthereum:
+    image: evilink/evilthereum
+    # NOTE: uncomment for debug
+    # ports:
+    # - ${RPC_PORT}:${RPC_PORT}
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+    - ../.evilthereum/chaindb:/evilthereum/chaindb
+    secrets:
+    - api.txt
+    - passphrase.txt
+    environment:
+    # NOTE: uncomment for debug
+    # - NODE_ENV=debug
+    - HTTP_PORT=${RPC_PORT}
+    - CHAIN_ID=${CHAIN_ID}
+    - CHAIN_DB_PATH=${CHAIN_DB_PATH}
+    - CHAINLINK_API_DSN=http://chainlink:6688
+    - CHAINLINK_API_AUTH_FILE=/run/secrets/api.txt
+    - CHAINLINK_DATABASE_DSN=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
+    - CHAINLINK_VRF_KEY_PASSPHRASE_FILE=/run/secrets/passphrase.txt
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.evilthereum.entrypoints=websecure
+    - traefik.http.routers.evilthereum.tls.certresolver=tlschallenge
+    - traefik.http.routers.evilthereum.service=evilthereum
+    - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_HOST}`)
+    - traefik.http.services.evilthereum.loadbalancer.server.port=${RPC_PORT}
+  chainlink:
+    image: han0110/chainlink:latest
+    # NOTE: uncomment for development
+    # ports:
+    # - 6688:6688
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      evilthereum:
+        condition: service_started
+    command:
+    - local
+    - start
+    - --api
+    - /run/secrets/api.txt
+    - --password
+    - /run/secrets/passphrase.txt
+    - --vrfpassword
+    - /run/secrets/passphrase.txt
+    volumes:
+    - ../.chainlink/root:/chainlink
+    secrets:
+    - api.txt
+    - passphrase.txt
+    environment:
+    - ROOT=/chainlink
+    - LOG_LEVEL=debug
+    - ETH_URL=ws://evilthereum:${RPC_PORT}
+    - ETH_CHAIN_ID=${CHAIN_ID}
+    - ETH_GAS_PRICE_DEFAULT=0
+    - GAS_UPDATER_ENABLED=false
+    - MIN_INCOMING_CONFIRMATIONS=0
+    - MIN_OUTGOING_CONFIRMATIONS=0
+    - LINK_CONTRACT_ADDRESS=0x87cc55e4e3b0a7f8f34cee3a3b39c674b9501ef3
+    - CHAINLINK_TLS_PORT=0
+    - SECURE_COOKIES=false
+    - ALLOW_ORIGINS=*
+    - DATABASE_URL=postgresql://${CHAINLINK_USER}:${CHAINLINK_PASSWORD}@postgres:5432/${CHAINLINK_DB}?sslmode=disable
+    - DATABASE_TIMEOUT=0
+    networks:
+    - internal
+  graph-node:
+    image: graphprotocol/graph-node:v0.20.0
+    # NOTE: uncomment for development
+    # ports:
+    # - 8000:8000
+    # - 8001:8001
+    # NOTE: uncomment for development and subgraph deployment
+    # - 8020:8020
+    # - 8030:8030
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+      evilthereum:
+        condition: service_started
+    environment:
+      postgres_host: postgres
+      postgres_user: ${THE_GRAPH_USER}
+      postgres_pass: ${THE_GRAPH_PASSWORD}
+      postgres_db: ${THE_GRAPH_DB}
+      ipfs: ipfs:5001
+      ethereum: evilthereum:http://evilthereum:${RPC_PORT}
+      RUST_LOG: info
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.graph-node-http.entrypoints=websecure
+    - traefik.http.routers.graph-node-http.tls.certresolver=tlschallenge
+    - traefik.http.routers.graph-node-http.service=graph-node-http
+    - traefik.http.routers.graph-node-http.rule=Host(`${THE_GRAPH_HTTP_HOST}`)
+    - traefik.http.services.graph-node-http.loadbalancer.server.port=8000
+    - traefik.http.routers.graph-node-ws.entrypoints=websecure
+    - traefik.http.routers.graph-node-ws.tls.certresolver=tlschallenge
+    - traefik.http.routers.graph-node-ws.service=graph-node-ws
+    - traefik.http.routers.graph-node-ws.rule=Host(`${THE_GRAPH_WS_HOST}`)
+    - traefik.http.services.graph-node-ws.loadbalancer.server.port=8001
+  playground:
+    image: evilink/playground
+    # NOTE: uncomment for development
+    # ports:
+    # - 3000:3000
+    depends_on:
+      evilthereum:
+        condition: service_started
+      graph-node:
+        condition: service_started
+    environment:
+    - THE_GRAPH_HTTP_ENDPOINT=${HTTP_PROTOCOL}://${THE_GRAPH_HTTP_HOST}
+    - THE_GRAPH_WS_ENDPOINT=${HTTP_PROTOCOL}://${THE_GRAPH_WS_HOST}
+    - ETHEREUM_CHAIN_ID=${CHAIN_ID}
+    - ETHEREUM_RPC_ENDPOINT=${HTTP_PROTOCOL}://${EVILTHEREUM_RPC_HOST}
+    networks:
+    - internal
+    - reverse-proxy
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.playground.entrypoints=websecure
+    - traefik.http.routers.playground.tls.certresolver=tlschallenge
+    - traefik.http.routers.playground.service=playground
+    - traefik.http.routers.playground.rule=Host(`${PLAYGROUND_HTTP_HOST}`)
+    - traefik.http.services.playground.loadbalancer.server.port=3000
+secrets:
+  api.txt:
+    file: ../.chainlink/secret/api.txt
+  passphrase.txt:
+    file: ../.chainlink/secret/passphrase.txt
+networks:
+  internal:
+    name: internal
+  reverse-proxy:
+    external:
+      name: reverse-proxy

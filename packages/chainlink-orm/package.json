@@ -1,0 +1,16 @@
+{
+  "name": "@evilink/chainlink-orm",
+  "version": "0.1.0",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "pg-promise": "^10.8.6",
+    "typescript": "^4.1.3"
+  },
+  "license": "MIT"
+}

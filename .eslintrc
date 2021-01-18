@@ -1,0 +1,23 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import", "prettier", "chai-friendly"],
+  "extends": [
+    "airbnb-typescript/base",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "env": {
+    "es6": true,
+    "mocha": true,
+    "node": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "chai-friendly/no-unused-expressions": "error",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "no-underscore-dangle": "off"
+  }
+}
