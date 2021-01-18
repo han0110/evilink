@@ -81,7 +81,7 @@ const LeaderBoard = ({ subscription }: LeaderBoardProps) => {
       <Heading variant="mono" size="md">
         Leader Board
       </Heading>
-      <Box overflowX="scroll">
+      <Box overflow="scroll" maxH={['none', 'none', '425px']}>
         <Table size="sm" variant="unstyled" width="100%" overflowX="scroll">
           <Thead>
             <Tr>
