@@ -64,31 +64,31 @@ But before the upcoming approach, we can still use current version VRF with some
 
 | Package                                                        | Description                         |
 | -------------------------------------------------------------- | ----------------------------------- |
-| [`@evilink/contracts-chainlink`](/contracts/chainlink)         | Chainlink related contracts         |
-| [`@evilink/contracts-faucet`](/contracts/faucet)               | Faucet contract for ether           |
-| [`@evilink/contracts-flipcoin`](/contracts/flipcoin)           | Coin tossing game using VRFConsumer |
+| [`@evilink/contracts-chainlink`](contracts/chainlink)         | Chainlink related contracts         |
+| [`@evilink/contracts-faucet`](contracts/faucet)               | Faucet contract for ether           |
+| [`@evilink/contracts-flipcoin`](contracts/flipcoin)           | Coin tossing game using VRFConsumer |
 
 ### Common Utilities
 
 | Package                                             | Description                                              |
 | --------------------------------------------------- | -------------------------------------------------------- |
-| [`@evilink/artifact-util`](/packages/artifact-util) | Artifact util for contract factory                       |
-| [`@evilink/constant`](/packages/constant)           | Constant including contract address, genesis private key |
+| [`@evilink/artifact-util`](packages/artifact-util) | Artifact util for contract factory                       |
+| [`@evilink/constant`](packages/constant)           | Constant including contract address, genesis private key |
 
 ### Chainlink Utilities
 
 | Package                                                   | Description                                           |
 | --------------------------------------------------------- | ----------------------------------------------------- |
-| [`@evilink/chainlink-client`](/packages/chainlink-client) | Chainlink API client                                  |
-| [`@evilink/chainlink-orm`](/packages/chainlink-orm)       | Chainlink ORM client                                  |
-| [`@evilink/chainlink-vrf`](/packages/chainlink-vrf)       | Chainlink VRF implementation in golang as gyp binding |
+| [`@evilink/chainlink-client`](packages/chainlink-client) | Chainlink API client                                  |
+| [`@evilink/chainlink-orm`](packages/chainlink-orm)       | Chainlink ORM client                                  |
+| [`@evilink/chainlink-vrf`](packages/chainlink-vrf)       | Chainlink VRF implementation in golang as gyp binding |
 
 ### Applications
 
 | Package                                         | Description                                               |
 | ----------------------------------------------- | --------------------------------------------------------- |
-| [`@evilink/evilthereum`](/packages/evilthereum) | Malicious miner with VRF key hacking VRFConsumers         |
-| [`@evilink/playground`](/packages/playground)   | Frontend for interaction with hacked contracts            |
+| [`@evilink/evilthereum`](packages/evilthereum) | Malicious miner with VRF key hacking VRFConsumers         |
+| [`@evilink/playground`](packages/playground)   | Frontend for interaction with hacked contracts            |
 
 ## Development
 
