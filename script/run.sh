@@ -10,7 +10,7 @@ source "$DIR_ROOT/script/util.sh"
 ENV="$DIR_ROOT/script/docker-compose.env"
 ENV_SAMPLE="$DIR_ROOT/script/docker-compose.sample.env"
 
-PROJECT_NAME="evilink"
+PROJECT="evilink"
 COMMANDS=(
     build
     config
@@ -18,24 +18,55 @@ COMMANDS=(
     down
     exec
     clean
+    deploy_subgraph
 )
 BUILD_TARGETS=(
     evilthereum
     playground
+)
+SUBGRAPHS=(
+    flipcoin
 )
 
 env_docker_compose() {
     [ ! -f "$ENV" ] && cp "$ENV_SAMPLE" "$ENV"
     # shellcheck disable=SC2046
     env $(grep -v '^#' "$ENV") \
-        docker-compose -p "$PROJECT_NAME" -f "$DIR_ROOT"/script/docker-compose.yml "$@"
+        docker-compose -p "$PROJECT" -f "$DIR_ROOT/script/docker-compose.yml" "$@"
+}
+
+read_container_id_or_exit() {
+    TARGET_CONTAINER_NAME=$1
+
+    ALL_CONTAINERS=()
+    while IFS='' read -r CONTAINER; do ALL_CONTAINERS+=("$CONTAINER"); done < \
+        <(docker ps --filter "label=com.docker.compose.project=$PROJECT" --format "{{ .Label \"com.docker.compose.service\" }}:{{ .ID }}")
+
+    if [ ${#ALL_CONTAINERS[@]} -eq  0 ]; then
+        echo "nothing found in project $PROJECT, have you ever run 'bash script/run.sh up'?" >&2
+        exit 1
+    fi
+
+    TARGET_CONTAINER_ID=$(value "${ALL_CONTAINERS[@]}" "$TARGET_CONTAINER_NAME")
+    if [ -z "$TARGET_CONTAINER_ID" ]; then
+        printf 'please specify container in\n' >&2
+        printf '  * %s\n' "${ALL_CONTAINERS[@]//:*/}" >&2
+        exit 1
+    fi
+
+    echo "$TARGET_CONTAINER_ID"
 }
 
 build() {
-    PACKAGE="$1"; shift
+    PACKAGE="$1"
+    if [ -z "$PACKAGE" ]; then echo "pacakge name is required" && exit 1; else shift; fi
     help_if_command_not_found "${BUILD_TARGETS[@]}" "$PACKAGE"
+
+    NAME="$PACKAGE"
+    [ -n "$DOCKER_HUB_USER" ] && NAME="$DOCKER_HUB_USER/$PACKAGE"
+
     yarn workspace "@evilink/$PACKAGE" build
-    yarn docker build "@evilink/$PACKAGE" -t "evilink/$PACKAGE" "$@"
+    yarn docker build "@evilink/$PACKAGE" -t "$NAME" "$@"
 }
 
 config() {
@@ -53,24 +84,10 @@ down() {
 }
 
 exec() {
-    TARGET_CONTAINER_NAME=$1; shift
-    if [ -z "$TARGET_CONTAINER_NAME" ]; then echo "container name is required" && exit 1; fi
+    TARGET_CONTAINER_NAME=$1
+    if [ -z "$TARGET_CONTAINER_NAME" ]; then echo "container name is required" && exit 1; else shift; fi
 
-    ALL_CONTAINERS=()
-    while IFS='' read -r CONTAINER; do ALL_CONTAINERS+=("$CONTAINER"); done < \
-        <(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.Label \"com.docker.compose.service\"}}:{{ .ID }}")
-
-    if [ ${#ALL_CONTAINERS[@]} -eq  0 ]; then
-        echo "nothing found in project $PROJECT_NAME, have you ever run 'bash script/run.sh up'?"
-        exit 1
-    fi
-
-    TARGET_CONTAINER_ID=$(value "${ALL_CONTAINERS[@]}" "$TARGET_CONTAINER_NAME")
-    if [ -z "$TARGET_CONTAINER_ID" ]; then
-        printf 'please specify container in\n'
-        printf '  * %s\n' "${ALL_CONTAINERS[@]//:*/}"
-        exit 1
-    fi
+    TARGET_CONTAINER_ID=$(read_container_id_or_exit "$TARGET_CONTAINER_NAME")
 
     ENTRYPOINT=${1:-/bin/bash}
     docker exec -it "$TARGET_CONTAINER_ID" "$ENTRYPOINT"
@@ -81,6 +98,27 @@ clean() {
     rm -rf "${DIR_ROOT}/.evilthereum/chaindb"
     rm -rf "${DIR_ROOT}/.ipfs/data"
     rm -rf "${DIR_ROOT}/.postgres/data"
+}
+
+deploy_subgraph() {
+    NETWORK_ID=$(docker network ls \
+        --filter "label=com.docker.compose.project=${PROJECT}" \
+        --filter "name=internal" \
+        --format "{{ .ID }}")
+    THE_GRAPH_ID=$(read_container_id_or_exit graph-node)
+    IPFS_ID=$(read_container_id_or_exit ipfs)
+
+    SUBGRAPH=$1
+    if [ -z "$SUBGRAPH" ]; then echo "subgraph name is required" && exit 1; else shift; fi
+    help_if_command_not_found "${SUBGRAPHS[@]}" "$SUBGRAPH"
+
+    docker run \
+        -v "$(pwd)/${DIR_ROOT}/contracts/${SUBGRAPH}:/subgraph" \
+        -w /subgraph \
+        --network "$NETWORK_ID" \
+        -e "THE_GRAPH_ADMIN_URI=http://${THE_GRAPH_ID}:8020" \
+        -e "IPFS_URI=http://${IPFS_ID}:5001" \
+        han0110/subgraph "$SUBGRAPH" "$@"
 }
 
 main() {

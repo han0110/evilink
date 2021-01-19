@@ -1,0 +1,11 @@
+ARG NODE_IMAGE_TAG=14
+
+FROM node:${NODE_IMAGE_TAG}
+
+RUN yarn global add @graphprotocol/graph-cli @graphprotocol/graph-ts
+RUN mkdir /subgraph && ln -s "$(yarn global dir)/node_modules" /node_modules
+
+COPY deploy-subgraph.sh /deploy-subgraph.sh
+RUN chmod +x /deploy-subgraph.sh
+
+ENTRYPOINT ["/deploy-subgraph.sh"]
