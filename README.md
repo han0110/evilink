@@ -55,7 +55,7 @@ From Chainlink's awesome [blog](https://blog.chain.link/verifiable-random-functi
 
 But before the upcoming approach, we can still use current version VRF with some good practices:
 
-1. Contracts should have a mechanism (by voting or by admin) to change the VRF service once current one is thought malicious or key leaked.
+1. Contracts should have a mechanism (by voting or by admin) to change the VRF service in case current one is thought malicious or key leaked.
 2. Contracts could request multiple randomness in **one transaciton** and combine incoming randomnesses over threshold to be final randomness to act like threshold signature approach, but it costs much more both time and LINK.
 
 ## Packages
@@ -64,31 +64,31 @@ But before the upcoming approach, we can still use current version VRF with some
 
 | Package                                                        | Description                         |
 | -------------------------------------------------------------- | ----------------------------------- |
-| [`@evilink/contracts-chainlink`](/contracts/chainlink)         | Chainlink related contracts         |
-| [`@evilink/contracts-faucet`](/contracts/faucet)               | Faucet contract for ether           |
-| [`@evilink/contracts-flipcoin`](/contracts/flipcoin)           | Coin tossing game using VRFConsumer |
+| [`@evilink/contracts-chainlink`](contracts/chainlink)         | Chainlink related contracts         |
+| [`@evilink/contracts-faucet`](contracts/faucet)               | Faucet contract for ether           |
+| [`@evilink/contracts-flipcoin`](contracts/flipcoin)           | Coin tossing game using VRFConsumer |
 
 ### Common Utilities
 
 | Package                                             | Description                                              |
 | --------------------------------------------------- | -------------------------------------------------------- |
-| [`@evilink/artifact-util`](/packages/artifact-util) | Artifact util for contract factory                       |
-| [`@evilink/constant`](/packages/constant)           | Constant including contract address, genesis private key |
+| [`@evilink/artifact-util`](packages/artifact-util) | Artifact util for contract factory                       |
+| [`@evilink/constant`](packages/constant)           | Constant including contract address, genesis private key |
 
 ### Chainlink Utilities
 
 | Package                                                   | Description                                           |
 | --------------------------------------------------------- | ----------------------------------------------------- |
-| [`@evilink/chainlink-client`](/packages/chainlink-client) | Chainlink API client                                  |
-| [`@evilink/chainlink-orm`](/packages/chainlink-orm)       | Chainlink ORM client                                  |
-| [`@evilink/chainlink-vrf`](/packages/chainlink-vrf)       | Chainlink VRF implementation in golang as gyp binding |
+| [`@evilink/chainlink-client`](packages/chainlink-client) | Chainlink API client                                  |
+| [`@evilink/chainlink-orm`](packages/chainlink-orm)       | Chainlink ORM client                                  |
+| [`@evilink/chainlink-vrf`](packages/chainlink-vrf)       | Chainlink VRF implementation in golang as gyp binding |
 
 ### Applications
 
 | Package                                         | Description                                               |
 | ----------------------------------------------- | --------------------------------------------------------- |
-| [`@evilink/evilthereum`](/packages/evilthereum) | Malicious miner with VRF key hacking VRFConsumers         |
-| [`@evilink/playground`](/packages/playground)   | Frontend for interaction with hacked contracts            |
+| [`@evilink/evilthereum`](packages/evilthereum) | Malicious miner with VRF key hacking VRFConsumers         |
+| [`@evilink/playground`](packages/playground)   | Frontend for interaction with hacked contracts            |
 
 ## Development
 
@@ -118,4 +118,6 @@ bash script/run.sh build
 cp docker-compose.sample.env docker-compose.env
 # after update the values in docker-compose.env
 bash script/run.sh up
+# wait for ipfs and graph-node ready
+bash script/run.sh deploy_subgraph flipcoin
 ```

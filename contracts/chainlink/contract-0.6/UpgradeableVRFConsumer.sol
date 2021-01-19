@@ -38,8 +38,8 @@ abstract contract UpgradeableVRFConsumer is Ownable, VRFConsumerBase {
         _setFee(fee);
     }
 
-    function requestRandomness(uint256 _seed) internal returns (bytes32) {
-        return super.requestRandomness(_keyHash, _fee, _seed);
+    function requestRandomness(uint256 seed) internal returns (bytes32) {
+        return super.requestRandomness(_keyHash, _fee, seed);
     }
 
     function _setKeyHash(bytes32 keyHash) private {
