@@ -56,7 +56,7 @@ From Chainlink's awesome [blog](https://blog.chain.link/verifiable-random-functi
 But before the upcoming approach, we can still use current version VRF with some good practices:
 
 1. Contracts should have a mechanism (by voting or by admin) to change the VRF service in case current one is thought malicious or key leaked.
-2. Contracts could request multiple randomness in **one transaciton** and combine incoming randomnesses over threshold to be final randomness to act like threshold signature approach, but it costs much more both time and LINK.
+2. Contracts could request multiple randomness in **one transaciton** and combine incoming randomnesses over threshold to be final randomness to act like threshold signature approach, but it costs much more both time and LINK. Implementation can be found [here](/contracts/chainlink/contract-0.6/ThresholdVRFConsumer.sol).
 
 ## Packages
 

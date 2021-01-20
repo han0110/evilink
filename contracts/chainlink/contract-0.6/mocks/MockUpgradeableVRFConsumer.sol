@@ -2,9 +2,9 @@
 
 pragma solidity ^0.6.0;
 
-import "./UpgradeableVRFConsumer.sol";
+import "../UpgradeableVRFConsumer.sol";
 
-contract MockVRFConsumer is UpgradeableVRFConsumer {
+contract MockUpgradeableVRFConsumer is UpgradeableVRFConsumer {
     uint256 public constant VRF_SERVICE_FEE = 10**18;
 
     uint256 internal _randomness;
