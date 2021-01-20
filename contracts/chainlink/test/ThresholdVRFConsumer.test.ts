@@ -68,6 +68,10 @@ describe('ThresholdVRFConsumer', () => {
         ),
       Promise.resolve(),
     )
+
+    expect(await mockThresholdVrfConsumer.totalService()).to.equal(
+      vrfServices.length,
+    )
   })
 
   const expectConsume = async (threshold: number) => {
