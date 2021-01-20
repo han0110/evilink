@@ -16,12 +16,8 @@ contract MockThresholdVRFConsumer is ThresholdVRFConsumer {
         return _randomness;
     }
 
-    function consume(
-        uint256 seed,
-        uint256 threshold,
-        uint256 totalRequest
-    ) external {
-        requestThresholdRandomness(seed, threshold, totalRequest);
+    function consume(uint256 seed, uint256 threshold) external {
+        requestThresholdRandomness(seed, threshold);
     }
 
     function fulfillThresholdRandomness(bytes32, uint256 randomness)

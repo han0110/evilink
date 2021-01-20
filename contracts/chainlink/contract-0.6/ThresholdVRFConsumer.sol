@@ -44,22 +44,13 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         return _requestRandomness(seed);
     }
 
-    function requestThresholdRandomness(uint256 seed, uint256 threshold)
-        internal
-        returns (bytes32)
-    {
-        return requestThresholdRandomness(seed, threshold, threshold);
-    }
-
     function requestThresholdRandomness(
         uint256 seed,
-        uint256 threshold,
-        uint256 totalRequest
+        uint256 threshold
     ) internal returns (bytes32) {
         require(threshold > 0, "THRESHOLD_MUST_GT_ZERO");
-        require(threshold <= totalRequest, "THRESHOLD_MUST_LTE_TOTAL_REQUEST");
 
-        if (threshold == 1 && totalRequest == 1) {
+        if (threshold == 1) {
             return _requestRandomness(seed);
         }
 
@@ -68,7 +59,7 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         _nonce.increment();
 
         _trrs[thresholdRequestId].threshold = threshold;
-        _requestRandomness(seed, thresholdRequestId, totalRequest);
+        _requestRandomness(seed, thresholdRequestId, threshold);
 
         return thresholdRequestId;
     }
@@ -130,11 +121,11 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
     function _requestRandomness(
         uint256 seed,
         bytes32 thresholdRequestId,
-        uint256 totalRequest
+        uint256 threshold
     ) private {
         uint256 balance = LINK.balanceOf(address(this));
 
-        for (uint256 i = 0; i < totalRequest; i++) {
+        for (uint256 i = 0; i < threshold; i++) {
             EnumerableService.Service memory service = _nextService();
 
             require(balance >= service.fee, "INSUFFICIENT_LINK");

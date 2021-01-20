@@ -70,11 +70,10 @@ describe('ThresholdVRFConsumer', () => {
     )
   })
 
-  const expectConsume = async (threshold: number, totalRequest: number) => {
+  const expectConsume = async (threshold: number) => {
     const tx = await mockThresholdVrfConsumer.consume(
       randomBytes(32), // seed
       threshold,
-      totalRequest,
     )
     await expect(Promise.resolve(tx)).to.emit(
       vrfCoordinator,
@@ -93,14 +92,14 @@ describe('ThresholdVRFConsumer', () => {
           vrfCoordinatorFactory.interface.getEventTopic('RandomnessRequest'),
       )
       .map(({ data }) => `0x${data.substr(66, 64)}`)
-    expect(preSeeds.length).to.eq(totalRequest)
+    expect(preSeeds.length).to.eq(threshold)
 
     // Shuffle randomness orders
-    const results = shuffle(vrfServices.slice(0, totalRequest))
-      .slice(0, threshold)
-      .map(({ idx, privateKey }) =>
-        generateProof(privateKey, preSeeds[idx], blockHash, blockNumber),
-      )
+    const results = shuffle(
+      vrfServices.slice(0, threshold),
+    ).map(({ idx, privateKey }) =>
+      generateProof(privateKey, preSeeds[idx], blockHash, blockNumber),
+    )
     await Promise.all(
       results.map(({ packedForContractInput }, idx) =>
         expect(
@@ -120,12 +119,7 @@ describe('ThresholdVRFConsumer', () => {
     )
   }
 
-  it('should consume randomness of (threshold, totalRequest) = (1, 1)', () =>
-    expectConsume(1, 1))
-
-  it('should consume randomness of (threshold, totalRequest) = (5, 5)', () =>
-    expectConsume(5, 5))
-
-  it('should consume randomness of (threshold, totalRequest) = (3, 5)', () =>
-    expectConsume(3, 5))
+  it('should consume randomness of threshold 1', () => expectConsume(1))
+  it('should consume randomness of threshold 3', () => expectConsume(3))
+  it('should consume randomness of threshold 5', () => expectConsume(5))
 })
