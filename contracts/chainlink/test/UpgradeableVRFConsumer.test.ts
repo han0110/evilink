@@ -5,11 +5,11 @@ import { hexlify } from '@ethersproject/bytes'
 import { randomBytes } from '@ethersproject/random'
 import { generateProof, publicKey } from '@evilink/chainlink-vrf'
 import { deployChainlinkStack } from '../src/chainlink-stack'
-import { mockVrfConsumerFactory } from './artifact'
+import { mockUpgradeableVrfConsumerFactory } from './artifact'
 
 use(solidity)
 
-describe('chainlink stack', () => {
+describe('UpgradeableVRFConsumer', () => {
   const privateKey =
     '0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa'
   const { x, y, hash: keyHash } = publicKey(privateKey)
@@ -21,7 +21,7 @@ describe('chainlink stack', () => {
 
   let mockLinkToken: Contract
   let vrfCoordinator: Contract
-  let mockVrfConsumer: Contract
+  let mockUpgradeableVrfConsumer: Contract
 
   beforeEach(async () => {
     ;({ mockLinkToken, vrfCoordinator } = await deployChainlinkStack(deployer))
@@ -34,20 +34,20 @@ describe('chainlink stack', () => {
       .to.emit(vrfCoordinator, 'NewServiceAgreement')
       .withArgs(keyHash, fee)
 
-    mockVrfConsumer = await mockVrfConsumerFactory.deploy(
+    mockUpgradeableVrfConsumer = await mockUpgradeableVrfConsumerFactory.deploy(
       deployer,
       vrfCoordinator.address,
       mockLinkToken.address,
       keyHash,
     )
-    expect(mockVrfConsumer.address).to.properAddress
+    expect(mockUpgradeableVrfConsumer.address).to.properAddress
   })
 
   it('should consume randomness', async () => {
     const userSeed =
       '0xa4e7cb8c8b7e26212584dc75d56a52dd86f17a9fc1024d03b73b6b8db2976844'
 
-    const tx = await mockVrfConsumer.consume(userSeed)
+    const tx = await mockUpgradeableVrfConsumer.consume(userSeed)
     await expect(Promise.resolve(tx)).to.emit(
       vrfCoordinator,
       'RandomnessRequest',
@@ -69,6 +69,6 @@ describe('chainlink stack', () => {
     await expect(
       vrfCoordinator.fulfillRandomnessRequest(packedForContractInput),
     ).to.emit(vrfCoordinator, 'RandomnessRequestFulfilled')
-    expect(await mockVrfConsumer.randomness()).to.equal(randomness)
+    expect(await mockUpgradeableVrfConsumer.randomness()).to.equal(randomness)
   })
 })

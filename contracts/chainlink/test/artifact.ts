@@ -4,14 +4,19 @@ import {
   ContractFactory,
 } from '@evilink/artifact-util'
 
-import * as MockVRFConsumer from '../contract-artifact/MockVRFConsumer.json'
+import * as MockUpgradeableVRFConsumer from '../contract-artifact/MockUpgradeableVRFConsumer.json'
+import * as MockThresholdVRFConsumer from '../contract-artifact/MockThresholdVRFConsumer.json'
 
 export const artifact = {
-  MockVRFConsumer: MockVRFConsumer as StandardContractOutput,
+  MockUpgradeableVRFConsumer: MockUpgradeableVRFConsumer as StandardContractOutput,
+  MockThresholdVRFConsumer: MockThresholdVRFConsumer as StandardContractOutput,
 }
 
-export const mockVrfConsumerFactory = createContractFactory(
-  artifact.MockVRFConsumer,
+export const mockUpgradeableVrfConsumerFactory = createContractFactory(
+  artifact.MockUpgradeableVRFConsumer,
+)
+export const mockThresholdVrfConsumerFactory = createContractFactory(
+  artifact.MockThresholdVRFConsumer,
 )
 
 export { StandardContractOutput, ContractFactory }
