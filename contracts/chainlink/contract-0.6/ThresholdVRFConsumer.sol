@@ -3,12 +3,10 @@
 pragma solidity ^0.6.0;
 
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./utils/EnumerableService.sol";
 
-abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
+abstract contract ThresholdVRFConsumer is VRFConsumerBase {
     using Counters for Counters.Counter;
     using EnumerableService for EnumerableService.Bytes32ToServiceMap;
 
@@ -36,7 +34,6 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
 
     constructor(address vrfCoordinator, address linkToken)
         public
-        Ownable()
         VRFConsumerBase(vrfCoordinator, linkToken)
     {} // solhint-disable-line no-empty-blocks
 
@@ -48,18 +45,9 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         internal
         returns (bytes32)
     {
-        return requestThresholdRandomness(seed, threshold, threshold);
-    }
-
-    function requestThresholdRandomness(
-        uint256 seed,
-        uint256 threshold,
-        uint256 totalRequest
-    ) internal returns (bytes32) {
         require(threshold > 0, "THRESHOLD_MUST_GT_ZERO");
-        require(threshold <= totalRequest, "THRESHOLD_MUST_LTE_TOTAL_REQUEST");
 
-        if (threshold == 1 && totalRequest == 1) {
+        if (threshold == 1) {
             return _requestRandomness(seed);
         }
 
@@ -68,7 +56,7 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         _nonce.increment();
 
         _trrs[thresholdRequestId].threshold = threshold;
-        _requestRandomness(seed, thresholdRequestId, totalRequest);
+        _requestRandomness(seed, thresholdRequestId, threshold);
 
         return thresholdRequestId;
     }
@@ -107,10 +95,46 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         }
     }
 
+    function totalService() external view returns (uint256) {
+        return _service.length();
+    }
+
+    function serviceKeyHashByIndex(uint256 index)
+        external
+        view
+        returns (bytes32 keyHash)
+    {
+        (keyHash, ) = _service.at(index);
+    }
+
+    function _addService(bytes32 keyHash, uint256 fee) internal {
+        _service.set(keyHash, EnumerableService.Service(keyHash, fee));
+        emit ServiceAdded(keyHash, fee);
+    }
+
     function fulfillThresholdRandomness(
         bytes32 thresholdRequestId,
         uint256 randomness
     ) internal virtual;
+
+    function _removeService(bytes32 keyHash) internal {
+        _service.remove(keyHash);
+        emit ServiceRemoved(keyHash);
+    }
+
+    function _nextService()
+        private
+        returns (EnumerableService.Service memory service)
+    {
+        require(_service.length() > 0, "NO_SERVICES_YET");
+
+        if (_serviceRrc >= _service.length()) {
+            _serviceRrc = 0;
+        }
+
+        (, service) = _service.at(_serviceRrc);
+        _serviceRrc += 1;
+    }
 
     function _requestRandomness(uint256 seed)
         private
@@ -130,11 +154,13 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
     function _requestRandomness(
         uint256 seed,
         bytes32 thresholdRequestId,
-        uint256 totalRequest
+        uint256 threshold
     ) private {
+        require(_service.length() >= threshold, "INSUFFICIENT_SERVICE");
+
         uint256 balance = LINK.balanceOf(address(this));
 
-        for (uint256 i = 0; i < totalRequest; i++) {
+        for (uint256 i = 0; i < threshold; i++) {
             EnumerableService.Service memory service = _nextService();
 
             require(balance >= service.fee, "INSUFFICIENT_LINK");
@@ -146,37 +172,5 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
 
             _rrIdToTrrId[requestId] = thresholdRequestId;
         }
-    }
-
-    function _nextService()
-        private
-        returns (EnumerableService.Service memory service)
-    {
-        require(_service.length() > 0, "NO_SERVICES_YET");
-
-        if (_serviceRrc >= _service.length()) {
-            _serviceRrc = 0;
-        }
-
-        (, service) = _service.at(_serviceRrc);
-        _serviceRrc += 1;
-    }
-
-    function addService(bytes32 keyHash, uint256 fee) external onlyOwner {
-        _addService(keyHash, fee);
-    }
-
-    function removeService(bytes32 keyHash) external onlyOwner {
-        _removeService(keyHash);
-    }
-
-    function _addService(bytes32 keyHash, uint256 fee) private {
-        _service.set(keyHash, EnumerableService.Service(keyHash, fee));
-        emit ServiceAdded(keyHash, fee);
-    }
-
-    function _removeService(bytes32 keyHash) private {
-        _service.remove(keyHash);
-        emit ServiceRemoved(keyHash);
     }
 }

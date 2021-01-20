@@ -1,6 +1,6 @@
 # EVILink
 
-EVILink shows that a malicious miner still has a slim chance to tamper randomness provided by Chainlink's [VRF](https://docs.chain.link/docs/chainlink-vrf) solution.
+EVILink shows that a malicious miner still has a slim chance to tamper randomness provided by Chainlink's [VRF](https://blog.chain.link/verifiable-random-functions-vrf-random-number-generation-rng-feature) solution.
 
 - [EVILink](#evilink)
   - [Concept](#concept)
@@ -29,13 +29,18 @@ Chainlink VRF is an awesome solution for **NEARLY tamper-proof randomness**. Why
 2. `user_seed` - provided when user interact with the contract
 3. `block_hash` and `block_number` - block containing the event `RandomnessRequest`
 
-The only parameter tamperable after transaction sent is the `block_hash`, which can be easily tuned by change the block head extra data, but miner still has no way to predict randomness if it does not have `vrf_key`. However, there exists these situations for randomenss to be predictable:
+The only parameter tamperable after transaction sent is the `block_hash`, which can be easily tuned by change the block head extra data, but miner still has no way to predict randomness if it does not have `vrf_key`. However, there exists these situations for randomenss to be tamperable:
 
 1. `vrf_key` is leaked to miner
 2. `vrf_key` is held by miner from the beginning
 3. miner conspires with the malicious `vrf_key` holder
 
 So miner can tune the `block_hash` to get the favorable result before mining.
+
+| Condition  | Diagram                                           |
+| ---------- | ------------------------------------------------- |
+| Normal     | ![VRF Tamper Proof](./asset/vrf-tamper-proof.png) |
+| Key Leaked | ![VRF Tamperable](./asset/vrf-tamperable.png)     |
 
 ### Proof of Concept
 
@@ -44,6 +49,8 @@ Here I present the first situation to hack a coin tossing game, after malicious 
 | Owner                                | Others                                 |
 | ------------------------------------ | -------------------------------------- |
 | ![owner](./asset/flipcoin-owner.gif) | ![others](./asset/flipcoin-others.gif) |
+
+> The
 
 ### Rethink
 
@@ -55,8 +62,9 @@ From Chainlink's awesome [blog](https://blog.chain.link/verifiable-random-functi
 
 But before the upcoming approach, we can still use current version VRF with some good practices:
 
-1. Contracts should have a mechanism (by voting or by admin) to change the VRF service in case current one is thought malicious or key leaked.
-2. Contracts could request multiple randomness in **one transaciton** and combine incoming randomnesses over threshold to be final randomness to act like threshold signature approach, but it costs much more both time and LINK. Implementation can be found [here](/contracts/chainlink/contract-0.6/ThresholdVRFConsumer.sol).
+1. Contract should have a mechanism (by voting or by admin) to change the VRF service in case current one is thought malicious or key leaked.
+2. Contract could request multiple randomness in **one transaction** and combine incoming randomnesses to be final randomness for a safer approach, it will be tamper-proof when **at least one secret key holder is safe and honest**. However, it costs much more both time and LINK. Implementation can be found [here](/contracts/chainlink/contract-0.6/ThresholdVRFConsumer.sol).
+  ![Threshold VRF](./asset/threshold-vrf.png)
 
 ## Packages
 

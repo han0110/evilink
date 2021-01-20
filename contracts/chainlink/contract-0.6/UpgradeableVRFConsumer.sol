@@ -3,9 +3,8 @@
 pragma solidity ^0.6.0;
 
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract UpgradeableVRFConsumer is Ownable, VRFConsumerBase {
+abstract contract UpgradeableVRFConsumer is VRFConsumerBase {
     bytes32 private _keyHash;
     uint256 private _fee;
 
@@ -17,7 +16,7 @@ abstract contract UpgradeableVRFConsumer is Ownable, VRFConsumerBase {
         address linkToken,
         bytes32 keyHash,
         uint256 fee
-    ) public Ownable() VRFConsumerBase(vrfCoordinator, linkToken) {
+    ) public VRFConsumerBase(vrfCoordinator, linkToken) {
         _keyHash = keyHash;
         _fee = fee;
     }
@@ -30,24 +29,16 @@ abstract contract UpgradeableVRFConsumer is Ownable, VRFConsumerBase {
         return _fee;
     }
 
-    function setKeyHash(bytes32 keyHash) external onlyOwner {
-        _setKeyHash(keyHash);
-    }
-
-    function setFee(uint256 fee) external onlyOwner {
-        _setFee(fee);
-    }
-
     function requestRandomness(uint256 seed) internal returns (bytes32) {
         return super.requestRandomness(_keyHash, _fee, seed);
     }
 
-    function _setKeyHash(bytes32 keyHash) private {
+    function _setKeyHash(bytes32 keyHash) internal {
         _keyHash = keyHash;
         emit KeyHashSet(keyHash);
     }
 
-    function _setFee(uint256 fee) private {
+    function _setFee(uint256 fee) internal {
         _fee = fee;
         emit FeeSet(fee);
     }
