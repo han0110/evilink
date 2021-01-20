@@ -3,12 +3,10 @@
 pragma solidity ^0.6.0;
 
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./utils/EnumerableService.sol";
 
-abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
+abstract contract ThresholdVRFConsumer is VRFConsumerBase {
     using Counters for Counters.Counter;
     using EnumerableService for EnumerableService.Bytes32ToServiceMap;
 
@@ -36,7 +34,6 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
 
     constructor(address vrfCoordinator, address linkToken)
         public
-        Ownable()
         VRFConsumerBase(vrfCoordinator, linkToken)
     {} // solhint-disable-line no-empty-blocks
 
@@ -98,11 +95,6 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         }
     }
 
-    function fulfillThresholdRandomness(
-        bytes32 thresholdRequestId,
-        uint256 randomness
-    ) internal virtual;
-
     function totalService() external view returns (uint256) {
         return _service.length();
     }
@@ -115,18 +107,15 @@ abstract contract ThresholdVRFConsumer is Ownable, VRFConsumerBase {
         (keyHash, ) = _service.at(index);
     }
 
-    function addService(bytes32 keyHash, uint256 fee) external onlyOwner {
-        _addService(keyHash, fee);
-    }
-
-    function removeService(bytes32 keyHash) external onlyOwner {
-        _removeService(keyHash);
-    }
-
     function _addService(bytes32 keyHash, uint256 fee) internal {
         _service.set(keyHash, EnumerableService.Service(keyHash, fee));
         emit ServiceAdded(keyHash, fee);
     }
+
+    function fulfillThresholdRandomness(
+        bytes32 thresholdRequestId,
+        uint256 randomness
+    ) internal virtual;
 
     function _removeService(bytes32 keyHash) internal {
         _service.remove(keyHash);
