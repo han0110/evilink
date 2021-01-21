@@ -44,13 +44,11 @@ So miner can tune the `block_hash` to get the favorable result before mining.
 
 ### Proof of Concept
 
-Here I present the first situation to hack a coin tossing game, after malicious miner steals the `vrf_key`, it can make owner always win and others always lose.
+Here I present the first situation of randomenss to be tamperable to hack a coin tossing game. When malicious miner steals the `vrf_key`, it can make owner of the contract [`FlipCoin.sol`](./contracts/flipcoin/contract/FlipCoin.sol) always win and others always lose.
 
 | Owner                                | Others                                 |
 | ------------------------------------ | -------------------------------------- |
 | ![owner](./asset/flipcoin-owner.gif) | ![others](./asset/flipcoin-others.gif) |
-
-> The
 
 ### Rethink
 
