@@ -62,11 +62,8 @@ build() {
     if [ -z "$PACKAGE" ]; then echo "pacakge name is required" && exit 1; else shift; fi
     help_if_command_not_found "${BUILD_TARGETS[@]}" "$PACKAGE"
 
-    NAME="$PACKAGE"
-    [ -n "$DOCKER_HUB_USER" ] && NAME="$DOCKER_HUB_USER/$PACKAGE"
-
     yarn workspace "@evilink/$PACKAGE" build
-    yarn docker build "@evilink/$PACKAGE" -t "$NAME" "$@"
+    yarn docker build "@evilink/$PACKAGE" -t "${DOCKER_HUB_USER:-han0110}/$PACKAGE" "$@"
 }
 
 config() {
