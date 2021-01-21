@@ -16,12 +16,12 @@
     "clean": "rm -rf lib contract-artifact"
   },
   "dependencies": {
-    "@ethersproject/constants": "^5.0.7",
-    "@ethersproject/contracts": "^5.0.8",
     "@evilink/artifact-util": "0.1.0",
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {
+    "@ethersproject/constants": "^5.0.7",
+    "@ethersproject/contracts": "^5.0.8",
     "@types/mocha": "^8.2.0",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.2.1",

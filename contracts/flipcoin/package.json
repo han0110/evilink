@@ -21,11 +21,11 @@
     "clean": "rm -rf lib contract-artifact"
   },
   "dependencies": {
-    "@ethersproject/contracts": "^5.0.8",
     "@evilink/artifact-util": "0.1.0",
     "@openzeppelin/contracts": "^3.3.0"
   },
   "devDependencies": {
+    "@ethersproject/contracts": "^5.0.8",
     "@evilink/contracts-chainlink": "0.1.0",
     "@graphprotocol/graph-cli": "^0.19.0",
     "@graphprotocol/graph-ts": "^0.19.0",

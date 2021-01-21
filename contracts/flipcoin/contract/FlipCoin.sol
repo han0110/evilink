@@ -2,32 +2,39 @@
 
 pragma solidity ^0.6.0;
 
+import "@evilink/contracts-chainlink/contract-0.6/UpgradeableVRFConsumer.sol";
 import "./FlipCoinBase.sol";
 
-contract FlipCoin is FlipCoinBase {
+contract FlipCoin is FlipCoinBase, UpgradeableVRFConsumer {
+    uint256 public constant VRF_SERVICE_FEE = 10**18;
+
     constructor(
-        address linkToken,
         address vrfCoordinator,
+        address linkToken,
         bytes32 keyHash
-    ) public FlipCoinBase(linkToken, vrfCoordinator, keyHash) {} // solhint-disable-line no-empty-blocks
+    )
+        public
+        payable
+        UpgradeableVRFConsumer(
+            vrfCoordinator,
+            linkToken,
+            keyHash,
+            VRF_SERVICE_FEE
+        )
+    {} // solhint-disable-line no-empty-blocks
+
+    function play(uint256 seed) external payable onlyValidPlayFee {
+        _play(requestRandomness(seed));
+    }
 
     function fulfillRandomness(bytes32 requestId, uint256 randomness)
         internal
         override
     {
-        address player = _requestIdToPlayer[requestId];
-        require(player != address(0));
+        _draw(requestId, randomness);
+    }
 
-        bool side = (randomness & 1) == 1;
-        if (side) {
-            _playerToBalance[player] = _playerToBalance[player].add(
-                PLAY_REWARD
-            );
-            _jackpot = _jackpot.sub(PLAY_REWARD);
-        }
-
-        delete _requestIdToPlayer[requestId];
-
-        emit Played(player, side);
+    function setKeyHash(bytes32 keyHash) external onlyOwner {
+        _setKeyHash(keyHash);
     }
 }
