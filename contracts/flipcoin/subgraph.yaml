@@ -2,7 +2,7 @@ specVersion: 0.0.2
 description: Play coin tossing to earn ether
 repository: https://github.com/han0110/evilink
 schema:
-  file: ./schema.graphql
+  file: ./subgraph/schema.graphql
 dataSources:
 - kind: ethereum/contract
   name: FlipCoin
@@ -20,7 +20,7 @@ dataSources:
     - PlayEvent
     abis:
     - name: FlipCoin
-      file: ./contract-artifact/FlipCoin.json
+      file: ./contract-artifact/FlipCoinBase.json
     eventHandlers:
     - event: OwnershipTransferred(indexed address,indexed address)
       handler: handleOwnershipTransferred
@@ -28,4 +28,4 @@ dataSources:
       handler: handleSubsidized
     - event: Played(address,bool)
       handler: handlePlayed
-    file: ./src/mapping.ts
+    file: ./subgraph/mapping.ts

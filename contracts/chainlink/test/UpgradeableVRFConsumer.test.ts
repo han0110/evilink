@@ -1,44 +1,31 @@
 import { expect, use } from 'chai'
 import { MockProvider, solidity } from 'ethereum-waffle'
 import { Contract } from '@ethersproject/contracts'
-import { hexlify } from '@ethersproject/bytes'
-import { randomBytes } from '@ethersproject/random'
-import { generateProof, publicKey } from '@evilink/chainlink-vrf'
-import { deployChainlinkStack } from '../src/chainlink-stack'
 import { mockUpgradeableVrfConsumerFactory } from './artifact'
+import { deployChainlinkStackWithServices, VRFService } from './util'
 
 use(solidity)
 
 describe('UpgradeableVRFConsumer', () => {
-  const privateKey =
-    '0x0fdcdb4f276c1b7f6e3b17f6c80d6bdd229cee59955b0b6a0c69f67cbf3943fa'
-  const { x, y, hash: keyHash } = publicKey(privateKey)
-  const oracleAddress = hexlify(randomBytes(20))
-  const jobId = hexlify(randomBytes(32))
-  const fee = 0
-
-  const [deployer] = new MockProvider().getWallets()
+  const [deployer, ...wallets] = new MockProvider().getWallets()
 
   let mockLinkToken: Contract
   let vrfCoordinator: Contract
+  let vrfService: VRFService
   let mockUpgradeableVrfConsumer: Contract
 
   beforeEach(async () => {
-    ;({ mockLinkToken, vrfCoordinator } = await deployChainlinkStack(deployer))
-    expect(mockLinkToken.address).to.properAddress
-    expect(vrfCoordinator.address).to.properAddress
-
-    await expect(
-      vrfCoordinator.registerProvingKey(fee, oracleAddress, [x, y], jobId),
-    )
-      .to.emit(vrfCoordinator, 'NewServiceAgreement')
-      .withArgs(keyHash, fee)
+    ;({
+      mockLinkToken,
+      vrfCoordinator,
+      vrfServices: [vrfService],
+    } = await deployChainlinkStackWithServices(wallets))
 
     mockUpgradeableVrfConsumer = await mockUpgradeableVrfConsumerFactory.deploy(
       deployer,
       vrfCoordinator.address,
       mockLinkToken.address,
-      keyHash,
+      vrfService.keyHash,
     )
     expect(mockUpgradeableVrfConsumer.address).to.properAddress
   })
@@ -60,8 +47,7 @@ describe('UpgradeableVRFConsumer', () => {
     } = await deployer.provider.getTransactionReceipt(tx.hash)
     const preSeed = `0x${logs[2].data.substr(66, 64)}`
 
-    const { randomness, packedForContractInput } = generateProof(
-      privateKey,
+    const { randomness, packedForContractInput } = vrfService.generateProof(
       preSeed,
       blockHash,
       blockNumber,

@@ -7,7 +7,7 @@ EVILthereum (base on [trufflesuite/ganache-core](https://github.com/trufflesuite
 ### Start with Chainlink Mocker
 
 ```bash
-yarn dev --chainlink-mocker-key 0x$(openssl rand -hex 32)
+yarn dev serve --chainlink-mocker-key 0x$(openssl rand -hex 32)
 ```
 
 ### Create [`ResultChecker`](./src/core/randomness-hacker/type.ts#L11) for [`RandomnessHacker`](./src/core/randomness-hacker/index.ts#L22)

@@ -1,55 +1,28 @@
 import { expect, use } from 'chai'
 import { MockProvider, solidity } from 'ethereum-waffle'
 import { Contract } from '@ethersproject/contracts'
-import { hexlify } from '@ethersproject/bytes'
 import { BigNumber } from '@ethersproject/bignumber'
 import { randomBytes } from '@ethersproject/random'
-import { generateProof, publicKey } from '@evilink/chainlink-vrf'
-import { deployChainlinkStack } from '../src/chainlink-stack'
 import { vrfCoordinatorFactory } from '../src/artifact'
 import { mockThresholdVrfConsumerFactory } from './artifact'
-import { shuffle } from './util'
+import { deployChainlinkStackWithServices, shuffle, VRFService } from './util'
 
 use(solidity)
 
 describe('ThresholdVRFConsumer', () => {
   const [deployer, ...wallets] = new MockProvider().getWallets()
-  const vrfServices = Array(5)
-    .fill(undefined)
-    .map((_, idx) => {
-      const privateKey = hexlify(randomBytes(32))
-      return {
-        idx,
-        privateKey,
-        ...publicKey(privateKey),
-        oracleAddress: hexlify(randomBytes(20)),
-        jobId: hexlify(randomBytes(32)),
-        fee: 0,
-      }
-    })
 
   let mockLinkToken: Contract
   let vrfCoordinator: Contract
+  let vrfServices: Array<VRFService>
   let mockThresholdVrfConsumer: Contract
 
   beforeEach(async () => {
-    ;({ mockLinkToken, vrfCoordinator } = await deployChainlinkStack(deployer))
-    expect(mockLinkToken.address).to.properAddress
-    expect(vrfCoordinator.address).to.properAddress
-
-    // Register services
-    await Promise.all(
-      vrfServices.map(
-        ({ fee, oracleAddress, x, y, hash: keyHash, jobId }, idx) =>
-          expect(
-            vrfCoordinator
-              .connect(wallets[idx])
-              .registerProvingKey(fee, oracleAddress, [x, y], jobId),
-          )
-            .to.emit(vrfCoordinator, 'NewServiceAgreement')
-            .withArgs(keyHash, fee),
-      ),
-    )
+    ;({
+      mockLinkToken,
+      vrfCoordinator,
+      vrfServices,
+    } = await deployChainlinkStackWithServices(wallets))
 
     mockThresholdVrfConsumer = await mockThresholdVrfConsumerFactory.deploy(
       deployer,
@@ -60,7 +33,7 @@ describe('ThresholdVRFConsumer', () => {
 
     // Add services for ThresholdVRFConsumer
     await vrfServices.reduce(
-      (promise, { fee, hash: keyHash }) =>
+      (promise, { fee, keyHash }) =>
         promise.then(() =>
           expect(mockThresholdVrfConsumer.addService(keyHash, fee))
             .to.emit(mockThresholdVrfConsumer, 'ServiceAdded')
@@ -99,10 +72,12 @@ describe('ThresholdVRFConsumer', () => {
     expect(preSeeds.length).to.eq(threshold)
 
     // Shuffle randomness orders
-    const results = shuffle(
-      vrfServices.slice(0, threshold),
-    ).map(({ idx, privateKey }) =>
-      generateProof(privateKey, preSeeds[idx], blockHash, blockNumber),
+    const results = shuffle(vrfServices.slice(0, threshold)).map((vrfService) =>
+      vrfService.generateProof(
+        preSeeds[vrfService.idx],
+        blockHash,
+        blockNumber,
+      ),
     )
     await Promise.all(
       results.map(({ packedForContractInput }, idx) =>

@@ -20,7 +20,7 @@ export const createProgram = () => {
     .option(
       '--http-port <http_port>',
       'http port to serve',
-      process.env.HTTP_PORT || '8545',
+      process.env.HTTP_PORT || '8577',
     )
     .option(
       '--chainlink-api-dsn <chainlink_api_dsn>',

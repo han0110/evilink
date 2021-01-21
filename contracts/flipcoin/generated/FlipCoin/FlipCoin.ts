@@ -10,42 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class FeeSet extends ethereum.Event {
-  get params(): FeeSet__Params {
-    return new FeeSet__Params(this);
-  }
-}
-
-export class FeeSet__Params {
-  _event: FeeSet;
-
-  constructor(event: FeeSet) {
-    this._event = event;
-  }
-
-  get fee(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-}
-
-export class KeyHashSet extends ethereum.Event {
-  get params(): KeyHashSet__Params {
-    return new KeyHashSet__Params(this);
-  }
-}
-
-export class KeyHashSet__Params {
-  _event: KeyHashSet;
-
-  constructor(event: KeyHashSet) {
-    this._event = event;
-  }
-
-  get keyHash(): Bytes {
-    return this._event.parameters[0].value.toBytes();
-  }
-}
-
 export class OwnershipTransferred extends ethereum.Event {
   get params(): OwnershipTransferred__Params {
     return new OwnershipTransferred__Params(this);
@@ -147,29 +111,6 @@ export class FlipCoin extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  VRF_SERVICE_FEE(): BigInt {
-    let result = super.call(
-      "VRF_SERVICE_FEE",
-      "VRF_SERVICE_FEE():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_VRF_SERVICE_FEE(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "VRF_SERVICE_FEE",
-      "VRF_SERVICE_FEE():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   balanceOf(player: Address): BigInt {
     let result = super.call("balanceOf", "balanceOf(address):(uint256)", [
       ethereum.Value.fromAddress(player)
@@ -189,21 +130,6 @@ export class FlipCoin extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  fee(): BigInt {
-    let result = super.call("fee", "fee():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_fee(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("fee", "fee():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   jackpot(): BigInt {
     let result = super.call("jackpot", "jackpot():(uint256)", []);
 
@@ -212,40 +138,6 @@ export class FlipCoin extends ethereum.SmartContract {
 
   try_jackpot(): ethereum.CallResult<BigInt> {
     let result = super.tryCall("jackpot", "jackpot():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  keyHash(): Bytes {
-    let result = super.call("keyHash", "keyHash():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_keyHash(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("keyHash", "keyHash():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  nonces(param0: Bytes): BigInt {
-    let result = super.call("nonces", "nonces(bytes32):(uint256)", [
-      ethereum.Value.fromFixedBytes(param0)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_nonces(param0: Bytes): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("nonces", "nonces(bytes32):(uint256)", [
-      ethereum.Value.fromFixedBytes(param0)
-    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -304,88 +196,12 @@ export class ConstructorCall__Inputs {
   constructor(call: ConstructorCall) {
     this._call = call;
   }
-
-  get linkToken(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get vrfCoordinator(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get keyHash(): Bytes {
-    return this._call.inputValues[2].value.toBytes();
-  }
 }
 
 export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class PlayCall extends ethereum.Call {
-  get inputs(): PlayCall__Inputs {
-    return new PlayCall__Inputs(this);
-  }
-
-  get outputs(): PlayCall__Outputs {
-    return new PlayCall__Outputs(this);
-  }
-}
-
-export class PlayCall__Inputs {
-  _call: PlayCall;
-
-  constructor(call: PlayCall) {
-    this._call = call;
-  }
-
-  get seed(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class PlayCall__Outputs {
-  _call: PlayCall;
-
-  constructor(call: PlayCall) {
-    this._call = call;
-  }
-}
-
-export class RawFulfillRandomnessCall extends ethereum.Call {
-  get inputs(): RawFulfillRandomnessCall__Inputs {
-    return new RawFulfillRandomnessCall__Inputs(this);
-  }
-
-  get outputs(): RawFulfillRandomnessCall__Outputs {
-    return new RawFulfillRandomnessCall__Outputs(this);
-  }
-}
-
-export class RawFulfillRandomnessCall__Inputs {
-  _call: RawFulfillRandomnessCall;
-
-  constructor(call: RawFulfillRandomnessCall) {
-    this._call = call;
-  }
-
-  get requestId(): Bytes {
-    return this._call.inputValues[0].value.toBytes();
-  }
-
-  get randomness(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class RawFulfillRandomnessCall__Outputs {
-  _call: RawFulfillRandomnessCall;
-
-  constructor(call: RawFulfillRandomnessCall) {
     this._call = call;
   }
 }
@@ -412,66 +228,6 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
-    this._call = call;
-  }
-}
-
-export class SetFeeCall extends ethereum.Call {
-  get inputs(): SetFeeCall__Inputs {
-    return new SetFeeCall__Inputs(this);
-  }
-
-  get outputs(): SetFeeCall__Outputs {
-    return new SetFeeCall__Outputs(this);
-  }
-}
-
-export class SetFeeCall__Inputs {
-  _call: SetFeeCall;
-
-  constructor(call: SetFeeCall) {
-    this._call = call;
-  }
-
-  get fee(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetFeeCall__Outputs {
-  _call: SetFeeCall;
-
-  constructor(call: SetFeeCall) {
-    this._call = call;
-  }
-}
-
-export class SetKeyHashCall extends ethereum.Call {
-  get inputs(): SetKeyHashCall__Inputs {
-    return new SetKeyHashCall__Inputs(this);
-  }
-
-  get outputs(): SetKeyHashCall__Outputs {
-    return new SetKeyHashCall__Outputs(this);
-  }
-}
-
-export class SetKeyHashCall__Inputs {
-  _call: SetKeyHashCall;
-
-  constructor(call: SetKeyHashCall) {
-    this._call = call;
-  }
-
-  get keyHash(): Bytes {
-    return this._call.inputValues[0].value.toBytes();
-  }
-}
-
-export class SetKeyHashCall__Outputs {
-  _call: SetKeyHashCall;
-
-  constructor(call: SetKeyHashCall) {
     this._call = call;
   }
 }
