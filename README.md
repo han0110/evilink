@@ -1,5 +1,7 @@
 # EVILink
 
+![CI](https://github.com/han0110/evilink/workflows/CI/badge.svg)
+
 EVILink shows that a malicious miner still has a slim chance to tamper randomness provided by Chainlink's [VRF](https://blog.chain.link/verifiable-random-functions-vrf-random-number-generation-rng-feature) solution.
 
 - [EVILink](#evilink)
