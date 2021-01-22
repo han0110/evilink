@@ -1,8 +1,9 @@
 {
   "name": "evilink",
   "scripts": {
-    "build": "yarn workspaces foreach run build",
+    "build": "yarn workspaces foreach --parallel --topological-dev run build",
     "test": "yarn workspaces foreach run test",
+    "lint": "yarn lint:ts && yarn lint:sol",
     "lint:ts": "eslint '{contracts,packages}/**/*.{ts,tsx}'",
     "lint:sol": "solhint --ignore-path contracts/.gitignore contracts/**/*.sol",
     "prettier": "prettier --check '{contracts,packages}/**/*.{ts,tsx,sol}' --ignore-path .eslintignore"
