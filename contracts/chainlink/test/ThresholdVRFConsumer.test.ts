@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { randomBytes } from '@ethersproject/random'
 import { vrfCoordinatorFactory } from '../src/artifact'
 import { mockThresholdVrfConsumerFactory } from './artifact'
-import { deployChainlinkStackWithServices, shuffle, VRFService } from './util'
+import { deployChainlinkStackWithServices, VRFService } from './util'
 
 use(solidity)
 
@@ -72,13 +72,11 @@ describe('ThresholdVRFConsumer', () => {
     expect(preSeeds.length).to.eq(threshold)
 
     // Shuffle randomness orders
-    const results = shuffle(vrfServices.slice(0, threshold)).map((vrfService) =>
-      vrfService.generateProof(
-        preSeeds[vrfService.idx],
-        blockHash,
-        blockNumber,
-      ),
-    )
+    const results = vrfServices
+      .slice(0, threshold)
+      .map((vrfService, idx) =>
+        vrfService.generateProof(preSeeds[idx], blockHash, blockNumber),
+      )
     await Promise.all(
       results.map(({ packedForContractInput }, idx) =>
         expect(

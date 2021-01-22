@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, no-param-reassign */
+/* eslint-disable import/no-extraneous-dependencies */
 
 import { expect, use } from 'chai'
 import { solidity } from 'ethereum-waffle'
@@ -12,7 +12,6 @@ import { deployChainlinkStack } from '../src/chainlink-stack'
 use(solidity)
 
 export type VRFService = {
-  idx: number
   privateKey: string
   keyHash: string
   x: string
@@ -43,11 +42,10 @@ export const deployChainlinkStackWithServices = async (
   // Random services
   const vrfServices = Array(5)
     .fill(undefined)
-    .map((_, idx) => {
+    .map(() => {
       const privateKey = hexlify(randomBytes(32))
       const { x, y, hash } = publicKey(privateKey)
       return {
-        idx,
         privateKey,
         x,
         y,
@@ -81,22 +79,4 @@ export const deployChainlinkStackWithServices = async (
     vrfCoordinator,
     vrfServices,
   }
-}
-
-export const shuffle = (array: Array<any>) => {
-  array = [...array]
-  let currentIndex = array.length
-  let temporaryValue
-  let randomIndex
-
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex -= 1
-
-    temporaryValue = array[currentIndex]
-    array[currentIndex] = array[randomIndex]
-    array[randomIndex] = temporaryValue
-  }
-
-  return array
 }
