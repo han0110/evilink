@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+  release:
+    types: [created]
+
+jobs:
+  test-build-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        go-version: [1.15.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Setup Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Build VRF implemented in golang for node-gyp binding
+      run: pushd packages/chainlink-vrf/go && make && popd
+    - run: yarn --immutable
+    - run: yarn lint
+    - run: yarn build
+    - run: yarn test
+    - run: bash script/run.sh build
+    - name: Re-tag
+      if: ${{ (github.event_name == 'push' && github.ref == 'master') || github.event_name == 'release' }}
+      run: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:0:8})
+    - name: Push evilink/evilthereum to Docker Hub
+      if: ${{ (github.event_name == 'push' && github.ref == 'master') || github.event_name == 'release' }}
+      uses: han0110/Publish-Docker-Github-Action@master
+      with:
+        name: evilink/evilthereum
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: "latest,${{ env.STATE_RELEASE_VERSION }}"
+        no_build: true
+    - name: Push evilink/playground to Docker Hub
+      if: ${{ (github.event_name == 'push' && github.ref == 'master') || github.event_name == 'release' }}
+      uses: han0110/Publish-Docker-Github-Action@master
+      with:
+        name: evilink/playground
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: "latest,${{ env.STATE_RELEASE_VERSION }}"
+        no_build: true

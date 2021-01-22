@@ -38,7 +38,7 @@ services:
     networks:
     - internal
   evilthereum:
-    image: ${DOCKER_HUB_USER:-han0110}/evilthereum
+    image: ${DOCKER_HUB_USER:-evilink}/evilthereum
     # NOTE: uncomment for debug
     # ports:
     # - ${RPC_PORT}:${RPC_PORT}
@@ -72,7 +72,7 @@ services:
     - traefik.http.routers.evilthereum.rule=Host(`${EVILTHEREUM_RPC_HOST}`)
     - traefik.http.services.evilthereum.loadbalancer.server.port=${RPC_PORT}
   chainlink:
-    image: han0110/chainlink:latest
+    image: ${DOCKER_HUB_USER:-evilink}/chainlink:latest
     # NOTE: uncomment for chainlink development
     # ports:
     # - 6688:6688
@@ -153,7 +153,7 @@ services:
     - traefik.http.routers.graph-node-ws.rule=Host(`${THE_GRAPH_WS_HOST}`)
     - traefik.http.services.graph-node-ws.loadbalancer.server.port=8001
   playground:
-    image: ${DOCKER_HUB_USER:-han0110}/playground
+    image: ${DOCKER_HUB_USER:-evilink}/playground
     # NOTE: uncomment for development
     # ports:
     # - 3000:3000

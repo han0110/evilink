@@ -1,5 +1,7 @@
 # EVILink
 
+![CI](https://github.com/han0110/evilink/workflows/CI/badge.svg)
+
 EVILink shows that a malicious miner still has a slim chance to tamper randomness provided by Chainlink's [VRF](https://blog.chain.link/verifiable-random-functions-vrf-random-number-generation-rng-feature) solution.
 
 - [EVILink](#evilink)
@@ -18,6 +20,7 @@ EVILink shows that a malicious miner still has a slim chance to tamper randomnes
     - [Prepare](#prepare)
     - [Build Docker Image](#build-docker-image)
     - [Start Docker Container](#start-docker-container)
+  - [Reference](#reference)
 
 ## Concept
 
@@ -108,7 +111,7 @@ But before the upcoming approach, we can still use current version VRF with some
 ```bash
 # build chainlink vrf for gyp binding
 pushd packages/chainlink-vrf/go && make && popd
-yarn
+yarn --immutable
 yarn build
 ```
 
@@ -127,3 +130,8 @@ bash script/run.sh up
 # wait for ipfs and graph-node ready
 bash script/run.sh deploy_subgraph flipcoin
 ```
+
+## Reference
+
+- [Chainlink VRF: On-chain Verifiable Randomness](https://blog.chain.link/verifiable-random-functions-vrf-random-number-generation-rng-feature)
+- [Making NSEC5 Practical for DNSSEC](https://eprint.iacr.org/2017/099.pdf)
